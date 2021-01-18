@@ -1,0 +1,79 @@
+{ "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "target":"."
+        }
+    },
+ "height":5,
+ "infinite":false,
+ "layers":[
+        {
+         "data":[536872641, 1730, 1730, 1730, 2684356289, 1945, 112, 112, 112, 1844, 1945, 4069, 2147487717, 112, 1844, 1945, 4069, 2147487717, 112, 1844, 1610614465, 1073743554, 1073743554, 1073743554, 3758098113],
+         "height":5,
+         "id":1,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":5,
+         "id":2,
+         "name":"Middle Layer",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8641, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":5,
+         "id":3,
+         "name":"Player Layer",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":false,
+         "width":5,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 7786, 0, 0, 0, 0, 7786, 0, 0, 0, 0, 7786, 0, 0, 0, 0, 0],
+         "height":5,
+         "id":4,
+         "name":"Top Layer",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "nextlayerid":6,
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tiledversion":"1.4.3",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "source":"tilesheet_complete_2X.json"
+        }, 
+        {
+         "firstgid":8641,
+         "source":"enemies.json"
+        }],
+ "tilewidth":32,
+ "type":"map",
+ "version":1.4,
+ "width":5
+}
