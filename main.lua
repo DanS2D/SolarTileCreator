@@ -177,17 +177,25 @@ applicationMainMenuBar =
 	}
 )
 
+local mainGroup = display.newGroup()
+local mGroup = display.newGroup()
+local midGroup = display.newGroup()
+local tGroup = display.newGroup()
+mainGroup:insert(mGroup)
+
 -- create grid
+---[[
 for i = 1, math.floor(display.contentWidth / 32) do
 	for j = 1, math.floor(display.contentHeight / 32) - 1 do
 		local rect = display.newRect(0, 0, 31, 31)
 		rect.strokeWidth = 1
-		rect:setFillColor(0, 0, 0)
+		rect:setFillColor(0, 0, 0, 0)
 		rect:setStrokeColor(0, 255, 0)
 		rect.x = (i * 32) - 16
 		rect.y = (j * 32) + 16
+		midGroup:insert(rect)
 	end
-end
+end--]]
 
 -- create the tile panel
 tilePanel = floatingPanel:new({
@@ -197,7 +205,6 @@ tilePanel = floatingPanel:new({
 })
 tilePanel.x = (display.contentWidth - (tilePanel.width * 0.5) - 5)
 tilePanel.y = (display.contentHeight - (tilePanel.height * 0.5))
-
 --
 
 local tileSheetOptions =
@@ -211,7 +218,18 @@ local tileSheetOptions =
 
 local imageSheet = graphics.newImageSheet("data/tiles/tilesheet_complete_2X.png", tileSheetOptions)
 local tiles = {}
-local tGroup = display.newGroup()
+local map = {
+	layers = {
+		{}
+	}
+}
+local selectedTileId = 0
+local mapTiles = {}
+
+-- 
+for i = 1, 1000 do
+	map.layers[1][i] = 0
+end
 
 local function tap(event)
 	local target = event.target
@@ -221,9 +239,73 @@ local function tap(event)
 		tiles[i].stroke.effect = nil
 	end
 
+	selectedTileId = target.tileIndex
 	target.strokeWidth = 1
 	target:setStrokeColor(1, 0, 0)
 	target.stroke.effect = "generator.marchingAnts"
+	print("tileset tile tapped")
+
+	return true
+end
+
+local function placeTile(event)
+	local target = event.target
+	map.layers[1][target.tileIndex] = selectedTileId
+	--print(("map layer 1, tile index: %d now has tile %d"):format(target.tileIndex, selectedTileId))
+	print("place tile tapped")
+
+	return true
+end
+
+local function drawMap(startX, xCount, startY, yCount)
+	for i = 1, #mapTiles do
+		display.remove(mapTiles[i])
+		mapTiles[i] = nil
+	end
+
+	display.remove(mGroup)
+	mGroup = nil
+	mGroup = display.newGroup()
+	mapTiles = {}
+	mapTiles = nil
+	mapTiles = {}
+	local iX = 0
+	local jY = 0
+
+	for i = startX, startX + (xCount - 1) do
+		iX = iX + 1
+	
+		if (iX > xCount) then
+			iX = 1
+		end
+
+		for j = startY, startY + (yCount - 1) do
+			jY = jY + 1
+
+			if (jY > yCount) then
+				jY = 1
+			end
+
+			local mRows = (display.contentWidth / 32) + 2
+			local index = (i + (mRows * j)) -- math: (x + (#mapRows * y))
+			local tileIndex = map.layers[1][index]
+
+			if (tileIndex > 0) then
+				mapTiles[#mapTiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
+			else
+				mapTiles[#mapTiles + 1] = display.newRect(0, 0, 32, 32)
+				mapTiles[#mapTiles]:setFillColor(0, 0, 0, 0.01)
+			end
+			
+			mapTiles[#mapTiles].x = (iX * 32) - 15
+			mapTiles[#mapTiles].y = (jY * 32) + 14
+			mapTiles[#mapTiles].tileIndex = index
+			mapTiles[#mapTiles]:addEventListener("tap", placeTile)
+			mGroup:insert(mapTiles[#mapTiles])
+		end
+	end
+
+	mainGroup:insert(mGroup)
 end
 
 local function create(startX, xCount, startY, yCount)
@@ -259,13 +341,22 @@ local function create(startX, xCount, startY, yCount)
 
 			tiles[#tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
 			tiles[#tiles].x = (iX * 34) - (tilePanel.width * 0.5) - 8
-			tiles[#tiles].y = (jY * 34) - (tilePanel.height * 0.5) 
+			tiles[#tiles].y = (jY * 34) - (tilePanel.height * 0.5)
+			tiles[#tiles].tileIndex = tileIndex
+
+			if (selectedTileId == tileIndex) then
+				tiles[#tiles].strokeWidth = 1
+				tiles[#tiles]:setStrokeColor(1, 0, 0)
+				tiles[#tiles].stroke.effect = "generator.marchingAnts"
+			end
+
 			tiles[#tiles]:addEventListener("tap", tap)
 			tGroup:insert(tiles[#tiles])
 		end
 	end
 
 	tilePanel:insert(tGroup)
+	display.getCurrentStage():insert(tilePanel)
 end
 
 local sX = 1
@@ -321,3 +412,10 @@ local function onKeyEvent(event)
 end
 
 Runtime:addEventListener("key", onKeyEvent)
+
+local function run(event)
+	drawMap(1, (display.contentWidth / 32) + 2, 1, (display.contentHeight / 32) + 2)
+	create(sX, sheetRows, sY, sheetColumns)
+end
+
+Runtime:addEventListener("enterFrame", run)
