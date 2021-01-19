@@ -12,6 +12,7 @@ local applicationMainMenuBar = nil
 local tilePanel = nil
 
 math.randomseed(os.time())
+display.setDefault("background", 48 / 255, 87 / 255, 225 / 255)
 
 -- create the main menu bar
 applicationMainMenuBar =
@@ -184,18 +185,17 @@ local tGroup = display.newGroup()
 mainGroup:insert(mGroup)
 
 -- create grid
----[[
 for i = 1, math.floor(display.contentWidth / 32) do
 	for j = 1, math.floor(display.contentHeight / 32) - 1 do
 		local rect = display.newRect(0, 0, 31, 31)
 		rect.strokeWidth = 1
 		rect:setFillColor(0, 0, 0, 0)
-		rect:setStrokeColor(0, 255, 0)
+		rect:setStrokeColor(1, 1, 1, 0.5)
 		rect.x = (i * 32) - 16
-		rect.y = (j * 32) + 16
+		rect.y = (j * 32) + 15
 		midGroup:insert(rect)
 	end
-end--]]
+end
 
 -- create the tile panel
 tilePanel = floatingPanel:new({
@@ -243,7 +243,7 @@ local function tap(event)
 	target.strokeWidth = 1
 	target:setStrokeColor(1, 0, 0)
 	target.stroke.effect = "generator.marchingAnts"
-	print("tileset tile tapped")
+	--print("tileset tile tapped")
 
 	return true
 end
@@ -252,7 +252,7 @@ local function placeTile(event)
 	local target = event.target
 	map.layers[1][target.tileIndex] = selectedTileId
 	--print(("map layer 1, tile index: %d now has tile %d"):format(target.tileIndex, selectedTileId))
-	print("place tile tapped")
+	--print("place tile tapped")
 
 	return true
 end
@@ -301,6 +301,7 @@ local function drawMap(startX, xCount, startY, yCount)
 			mapTiles[#mapTiles].y = (jY * 32) + 14
 			mapTiles[#mapTiles].tileIndex = index
 			mapTiles[#mapTiles]:addEventListener("tap", placeTile)
+			mapTiles[#mapTiles]:addEventListener("touch", placeTile)
 			mGroup:insert(mapTiles[#mapTiles])
 		end
 	end
@@ -380,7 +381,7 @@ local function onKeyEvent(event)
 			end
 
 			--tGroup.x = tGroup.x - 2
-			create(sX, sheetRows, sY, sheetColumns)
+			--create(sX, sheetRows, sY, sheetColumns)
 		elseif (keyName:lower() == "down") then
 			sY = sY + 1
 
@@ -388,7 +389,7 @@ local function onKeyEvent(event)
 				sY = 73
 			end
 
-			create(sX, sheetRows, sY, sheetColumns)
+			--create(sX, sheetRows, sY, sheetColumns)
 		elseif (keyName:lower() == "left") then
 			sX = sX - 1
 
@@ -396,7 +397,7 @@ local function onKeyEvent(event)
 				sX = 1
 			end
 
-			create(sX, sheetRows, sY, sheetColumns)
+			--create(sX, sheetRows, sY, sheetColumns)
 		elseif (keyName:lower() == "up") then
 			sY = sY - 1
 
@@ -404,7 +405,7 @@ local function onKeyEvent(event)
 				sY = 1
 			end
 
-			create(sX, sheetRows, sY, sheetColumns)
+			--create(sX, sheetRows, sY, sheetColumns)
 		end
 	--end
 

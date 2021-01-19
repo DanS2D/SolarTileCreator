@@ -19,6 +19,8 @@ function M:new(options)
 
 	local background = display.newRect(0, 0, width, height)
 	background.fill = theme:get().backgroundColor.primary
+	background:addEventListener("tap", function() return true end)
+	background:addEventListener("touch", function() return true end)
 	content:insert(background)
 
 	local titleText = display.newText({
