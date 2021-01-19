@@ -223,11 +223,13 @@ local map = {
 		{}
 	}
 }
+local overlayLayer = {}
 local selectedTileId = 0
 local mapTiles = {}
 
 -- 
 for i = 1, 1000 do
+	overlayLayer[i] = 0
 	map.layers[1][i] = 0
 end
 
@@ -413,6 +415,43 @@ local function onKeyEvent(event)
 end
 
 Runtime:addEventListener("key", onKeyEvent)
+
+
+local sequenceData =
+{
+	name = "highlightTile",
+	start = 1,
+	count = 8640,
+	time = 0,
+	loopCount = 1, -- Optional ; default is 0 (loop indefinitely)
+	loopDirection = "bounce" -- Optional ; values include "forward" or "bounce"
+}
+
+local highlightTile = display.newSprite(imageSheet, sequenceData)
+
+local function mouse(event)
+	local x = event.x
+	local y = event.y
+
+	if (selectedTileId > 0) then
+		for i = 1, #mapTiles do
+			local t = mapTiles[i]
+			
+			if (x >= t.x - (t.width * 0.5) and x <= t.x + (t.width * 0.5)) then
+				if (y >= t.y - (t.height * 0.5) and y <= t.y + (t.height * 0.5)) then
+					highlightTile.x = t.x
+					highlightTile.y = t.y
+					highlightTile:setFrame(selectedTileId)
+					break
+				end
+			end
+		end
+	end
+
+	return true
+end
+
+Runtime:addEventListener("mouse", mouse)
 
 local function run(event)
 	drawMap(1, (display.contentWidth / 32) + 2, 1, (display.contentHeight / 32) + 2)
