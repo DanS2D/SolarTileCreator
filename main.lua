@@ -5,6 +5,7 @@ local luaExt = require("lua-ext")
 local mainMenuBar = require("main-menu-bar")
 local editor = require("editor")
 local tilesheetPanel = require("tilesheet-panel")
+local mapPanel = require("map-panel")
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
 local fontAwesomeBrandsFont = "fonts/FA5-Brands-Regular.ttf"
@@ -287,54 +288,10 @@ local function drawMap(startX, xCount, startY, yCount)
 	mainGroup:insert(mGroup)
 end
 
-local sX = 1
-local sY = 1
-local sheetRows = 7
-local sheetColumns = 7
-tilePanel:render(mainGroup, sX, sheetRows, sY, sheetColumns)
+tilePanel:render(mainGroup, tilePanel.startX, tilePanel.xCount, tilePanel.startY, tilePanel.yCount)
 
 local function onKeyEvent(event)
-	local keyName = event.keyName
-	local phase = event.phase
-
-	--print(keyName)
-
-	--if (phase == "up") then
-		if (keyName:lower() == "right") then
-			sX = sX + 1
-
-			if (sX > 102) then
-				sX = 102
-			end
-
-			--tGroup.x = tGroup.x - 2
-			--create(sX, sheetRows, sY, sheetColumns)
-		elseif (keyName:lower() == "down") then
-			sY = sY + 1
-
-			if (sY > 73) then
-				sY = 73
-			end
-
-			--create(sX, sheetRows, sY, sheetColumns)
-		elseif (keyName:lower() == "left") then
-			sX = sX - 1
-
-			if (sX <= 1) then
-				sX = 1
-			end
-
-			--create(sX, sheetRows, sY, sheetColumns)
-		elseif (keyName:lower() == "up") then
-			sY = sY - 1
-
-			if (sY <= 1) then
-				sY = 1
-			end
-
-			--create(sX, sheetRows, sY, sheetColumns)
-		end
-	--end
+	tilePanel:onKeyEvent(event)
 
 	return true
 end
@@ -380,7 +337,7 @@ Runtime:addEventListener("mouse", mouse)
 
 local function run(event)
 	drawMap(1, (display.contentWidth / 32) + 2, 1, (display.contentHeight / 32) + 2)
-	tilePanel:render(mainGroup, sX, sheetRows, sY, sheetColumns)
+	tilePanel:render(mainGroup, tilePanel.startX, tilePanel.xCount, tilePanel.startY, tilePanel.yCount)
 end
 
 Runtime:addEventListener("enterFrame", run)

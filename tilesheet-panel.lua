@@ -12,6 +12,10 @@ function M:new()
 	panel.x = (display.contentWidth - (panel.width * 0.5))
 	panel.y = (display.contentHeight - (panel.height * 0.5) + 12)
 	panel.tiles = {}
+	panel.startX = 1
+	panel.xCount = 7
+	panel.startY = 1
+	panel.yCount = 7
 	panel.tileGroup = display.newGroup()
 
 	local tileSheetOptions =
@@ -90,6 +94,37 @@ function M:new()
 	
 		panel:insert(self.tileGroup)
 		display.getCurrentStage():insert(panel)
+	end
+
+	function panel:onKeyEvent(event)
+		local keyName = event.keyName
+		local phase = event.phase
+		
+		if (keyName:lower() == "left") then
+			self.startX = self.startX - 1
+
+			if (self.startX <= 1) then
+				self.startX = 1
+			end
+		elseif (keyName:lower() == "right") then
+			self.startX = self.startX + 1
+
+			if (self.startX > 102) then
+				self.startX = 102
+			end
+		elseif (keyName:lower() == "up") then
+			self.startY = self.startY - 1
+
+			if (self.startY <= 1) then
+				self.startY = 1
+			end
+		elseif (keyName:lower() == "down") then
+			self.startY = self.startY + 1
+
+			if (self.startY > 73) then
+				self.startY = 73
+			end
+		end
 	end
 
 	return panel
