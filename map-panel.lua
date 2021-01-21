@@ -86,15 +86,13 @@ function M:new(topGroup, gridRows, gridColumns)
 		local target = event.target
 		local phase = event.type
 
-		if (phase == "move") then
-			highlightTile.isVisible = (editor.selectedTileId > 0)
+		highlightTile.isVisible = (editor.selectedTileId > 0)
 
-			if (editor.selectedTileId > 0) then
-				highlightTile:setFrame(editor.selectedTileId)
-				highlightTile.isVisible = true
-				highlightTile.x = target.x
-				highlightTile.y = target.y
-			end
+		if (editor.selectedTileId > 0) then
+			highlightTile:setFrame(editor.selectedTileId)
+			highlightTile.isVisible = true
+			highlightTile.x = target.x
+			highlightTile.y = target.y
 		end
 	
 		return true
@@ -133,7 +131,7 @@ function M:new(topGroup, gridRows, gridColumns)
 					self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
 				else
 					self.tiles[#self.tiles + 1] = display.newRect(0, 0, 32, 32)
-					self.tiles[#self.tiles]:setFillColor(0, 0, 0, 0.01)
+					self.tiles[#self.tiles]:setFillColor(48 / 255, 87 / 255, 225 / 255)
 				end
 					
 				self.tiles[#self.tiles].x = (iX * 32) - (panel.width * 0.5)

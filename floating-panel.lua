@@ -18,7 +18,7 @@ function M:new(options)
 	panel:insert(menuBar)
 
 	local background = display.newRect(0, 0, width, height)
-	background.fill = theme:get().backgroundColor.primary
+	background.fill = options.backgroundColor or theme:get().backgroundColor.primary
 	background:addEventListener("tap", function() return true end)
 	background:addEventListener("touch", function() return true end)
 	content:insert(background)
