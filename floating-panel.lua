@@ -95,6 +95,7 @@ function M:new(options)
 	panel.oldInsert = panel.insert
 	panel.closed = false
 	panel.minimized = false
+	panel.content = content
 	panel.x = display.contentCenterX
 	panel.y = display.contentCenterY
 

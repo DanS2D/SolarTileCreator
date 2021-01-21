@@ -1,6 +1,5 @@
 local floatingPanel = require("floating-panel")
 local editor = require("editor")
-
 local M = {}
 
 function M:new()
@@ -45,7 +44,7 @@ function M:new()
 		return true
 	end
 
-	function panel:render(parentGroup, startX, xCount, startY, yCount)
+	function panel:render()
 		for i = 1, #self.tiles do
 			display.remove(self.tiles[i])
 			self.tiles[i] = nil
@@ -60,17 +59,17 @@ function M:new()
 		local iX = 0
 		local jY = 0
 	
-		for i = startX, startX + (xCount - 1) do
+		for i = self.startX, self.startX + (self.xCount - 1) do
 			iX = iX + 1
 		
-			if (iX > xCount) then
+			if (iX > self.xCount) then
 				iX = 1
 			end
 	
-			for j = startY, startY + (yCount - 1) do
+			for j = self.startY, self.startY + (self.yCount - 1) do
 				jY = jY + 1
 	
-				if (jY > yCount) then
+				if (jY > self.yCount) then
 					jY = 1
 				end
 	

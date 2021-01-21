@@ -179,165 +179,24 @@ applicationMainMenuBar =
 	}
 )
 
-local mainGroup = display.newGroup()
-local mGroup = display.newGroup()
-local midGroup = display.newGroup()
-local tGroup = display.newGroup()
-mainGroup:insert(mGroup)
+local bottomGroup = display.newGroup()
+local topGroup = display.newGroup()
 
--- create grid
-for i = 1, math.floor(display.contentWidth / 32) do
-	for j = 1, math.floor(display.contentHeight / 32) - 1 do
-		local rect = display.newRect(0, 0, 31, 31)
-		rect.strokeWidth = 1
-		rect:setFillColor(0, 0, 0, 0)
-		rect:setStrokeColor(1, 1, 1, 0.5)
-		rect.x = (i * 32) - 16
-		rect.y = (j * 32) + 15
-		midGroup:insert(rect)
-	end
-end
-
--- create the tile panel
+-- create the panels
+mapPanel = mapPanel:new(topGroup, 100, 100)
 tilePanel = tilesheetPanel:new()
---
-
-local tileSheetOptions =
-{
-	width = 32,
-	height = 32,
-	numFrames = 8640,
-	sheetContentWidth = 3456, -- width of original 1x size of entire sheet
-	sheetContentHeight = 2560 -- height of original 1x size of entire sheet
-}
-
-local imageSheet = graphics.newImageSheet("data/tiles/tilesheet_complete_2X.png", tileSheetOptions)
-local tiles = {}
-local map = {
-	layers = {
-		{}
-	}
-}
-local overlayLayer = {}
-local mapTiles = {}
-
--- 
-for i = 1, 1000 do
-	overlayLayer[i] = 0
-	map.layers[1][i] = 0
-end
-
-local function placeTile(event)
-	local target = event.target
-	map.layers[1][target.tileIndex] = editor.selectedTileId
-	--print(("map layer 1, tile index: %d now has tile %d"):format(target.tileIndex, selectedTileId))
-	--print("place tile tapped")
-
-	return true
-end
-
-local function drawMap(startX, xCount, startY, yCount)
-	for i = 1, #mapTiles do
-		display.remove(mapTiles[i])
-		mapTiles[i] = nil
-	end
-
-	display.remove(mGroup)
-	mGroup = nil
-	mGroup = display.newGroup()
-	mapTiles = {}
-	mapTiles = nil
-	mapTiles = {}
-	local iX = 0
-	local jY = 0
-
-	for i = startX, startX + (xCount - 1) do
-		iX = iX + 1
-	
-		if (iX > xCount) then
-			iX = 1
-		end
-
-		for j = startY, startY + (yCount - 1) do
-			jY = jY + 1
-
-			if (jY > yCount) then
-				jY = 1
-			end
-
-			local mRows = (display.contentWidth / 32) + 2
-			local index = (i + (mRows * j)) -- math: (x + (#mapRows * y))
-			local tileIndex = map.layers[1][index]
-
-			if (tileIndex > 0) then
-				mapTiles[#mapTiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
-			else
-				mapTiles[#mapTiles + 1] = display.newRect(0, 0, 32, 32)
-				mapTiles[#mapTiles]:setFillColor(0, 0, 0, 0.01)
-			end
-			
-			mapTiles[#mapTiles].x = (iX * 32) - 15
-			mapTiles[#mapTiles].y = (jY * 32) + 14
-			mapTiles[#mapTiles].tileIndex = index
-			mapTiles[#mapTiles]:addEventListener("tap", placeTile)
-			mapTiles[#mapTiles]:addEventListener("touch", placeTile)
-			mGroup:insert(mapTiles[#mapTiles])
-		end
-	end
-
-	mainGroup:insert(mGroup)
-end
-
-tilePanel:render(mainGroup, tilePanel.startX, tilePanel.xCount, tilePanel.startY, tilePanel.yCount)
 
 local function onKeyEvent(event)
 	tilePanel:onKeyEvent(event)
+	mapPanel:onKeyEvent(event)
 
 	return true
 end
 
+local function mainLoop(event)
+	mapPanel:render()
+	tilePanel:render()
+end
+
+Runtime:addEventListener("enterFrame", mainLoop)
 Runtime:addEventListener("key", onKeyEvent)
-
-local sequenceData =
-{
-	name = "highlightTile",
-	start = 1,
-	count = 8640,
-	time = 0,
-	loopCount = 1, -- Optional ; default is 0 (loop indefinitely)
-	loopDirection = "bounce" -- Optional ; values include "forward" or "bounce"
-}
-
-local highlightTile = display.newSprite(imageSheet, sequenceData)
-highlightTile.x = -100
-
-local function mouse(event)
-	local x = event.x
-	local y = event.y
-
-	if (editor.selectedTileId > 0) then
-		for i = 1, #mapTiles do
-			local t = mapTiles[i]
-			
-			if (x >= t.x - (t.width * 0.5) and x <= t.x + (t.width * 0.5)) then
-				if (y >= t.y - (t.height * 0.5) and y <= t.y + (t.height * 0.5)) then
-					highlightTile.x = t.x
-					highlightTile.y = t.y
-					highlightTile:setFrame(editor.selectedTileId)
-					break
-				end
-			end
-		end
-	end
-
-	return true
-end
-
-Runtime:addEventListener("mouse", mouse)
-
-local function run(event)
-	drawMap(1, (display.contentWidth / 32) + 2, 1, (display.contentHeight / 32) + 2)
-	tilePanel:render(mainGroup, tilePanel.startX, tilePanel.xCount, tilePanel.startY, tilePanel.yCount)
-end
-
-Runtime:addEventListener("enterFrame", run)
