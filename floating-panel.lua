@@ -76,28 +76,16 @@ function M:new(options)
 		self.minimized = isMinimized
 
 		if (self.minimized) then
-			if (content.allowMinimize) then
-				content.allowMinimize = false
-				content.anchorY = 0
-				content.y = -(height * 0.5)
+			content.isVisible = false
 
-				transition.to(content, {yScale = 0.001, time = outTime, onComplete = function()
-					content.allowMinimize = true	
-				end})
+			if (panel.oldY == nil) then
+				panel.oldY = panel.y
 			end
+
+			panel.y = (display.contentHeight + (panel.contentHeight / 2) - (menuBar.contentHeight / 2))
 		else
-			if (content.allowMinimize) then
-				content.allowMinimize = false
-				content.anchorY = 0
-				content.y = -(height * 0.5)
-
-				transition.to(content, {yScale = 1.0, time = outTime, onComplete = function()
-					content.anchorY = 0.5
-					content.y = 0
-					content.anchorChildren = true
-					content.allowMinimize = true
-				end})
-			end
+			content.isVisible = true
+			panel.y = panel.oldY
 		end
 	end
 

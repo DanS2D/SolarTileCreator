@@ -1,10 +1,10 @@
 
 local solarTiled = require("solarTilesCreator")
 --solarTiled:loadMap("data/tiles/largeTest.json")
-
 local luaExt = require("lua-ext")
 local mainMenuBar = require("main-menu-bar")
-local floatingPanel = require("floating-panel")
+local editor = require("editor")
+local tilesheetPanel = require("tilesheet-panel")
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
 local fontAwesomeBrandsFont = "fonts/FA5-Brands-Regular.ttf"
@@ -198,13 +198,7 @@ for i = 1, math.floor(display.contentWidth / 32) do
 end
 
 -- create the tile panel
-tilePanel = floatingPanel:new({
-	width = (display.contentWidth * 0.4),
-	height = (display.contentHeight * 0.5) + 10,
-	title = "Tiles",
-})
-tilePanel.x = (display.contentWidth - (tilePanel.width * 0.5) - 5)
-tilePanel.y = (display.contentHeight - (tilePanel.height * 0.5))
+tilePanel = tilesheetPanel:new()
 --
 
 local tileSheetOptions =
@@ -224,7 +218,6 @@ local map = {
 	}
 }
 local overlayLayer = {}
-local selectedTileId = 0
 local mapTiles = {}
 
 -- 
@@ -233,26 +226,9 @@ for i = 1, 1000 do
 	map.layers[1][i] = 0
 end
 
-local function tap(event)
-	local target = event.target
-
-	for i = 1, #tiles do
-		tiles[i].strokeWidth = 0
-		tiles[i].stroke.effect = nil
-	end
-
-	selectedTileId = target.tileIndex
-	target.strokeWidth = 1
-	target:setStrokeColor(1, 0, 0)
-	target.stroke.effect = "generator.marchingAnts"
-	--print("tileset tile tapped")
-
-	return true
-end
-
 local function placeTile(event)
 	local target = event.target
-	map.layers[1][target.tileIndex] = selectedTileId
+	map.layers[1][target.tileIndex] = editor.selectedTileId
 	--print(("map layer 1, tile index: %d now has tile %d"):format(target.tileIndex, selectedTileId))
 	--print("place tile tapped")
 
@@ -311,62 +287,11 @@ local function drawMap(startX, xCount, startY, yCount)
 	mainGroup:insert(mGroup)
 end
 
-local function create(startX, xCount, startY, yCount)
-	for i = 1, #tiles do
-		display.remove(tiles[i])
-		tiles[i] = nil
-	end
-
-	display.remove(tGroup)
-	tGroup = nil
-	tGroup = display.newGroup()
-	tiles = {}
-	tiles = nil
-	tiles = {}
-	local iX = 0
-	local jY = 0
-
-	for i = startX, startX + (xCount - 1) do
-		iX = iX + 1
-	
-		if (iX > xCount) then
-			iX = 1
-		end
-
-		for j = startY, startY + (yCount - 1) do
-			jY = jY + 1
-
-			if (jY > yCount) then
-				jY = 1
-			end
-
-			local tileIndex = (i + (108 * j)) -- math: (x + (#mapRows * y))
-
-			tiles[#tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
-			tiles[#tiles].x = (iX * 34) - (tilePanel.width * 0.5) - 8
-			tiles[#tiles].y = (jY * 34) - (tilePanel.height * 0.5)
-			tiles[#tiles].tileIndex = tileIndex
-
-			if (selectedTileId == tileIndex) then
-				tiles[#tiles].strokeWidth = 1
-				tiles[#tiles]:setStrokeColor(1, 0, 0)
-				tiles[#tiles].stroke.effect = "generator.marchingAnts"
-			end
-
-			tiles[#tiles]:addEventListener("tap", tap)
-			tGroup:insert(tiles[#tiles])
-		end
-	end
-
-	tilePanel:insert(tGroup)
-	display.getCurrentStage():insert(tilePanel)
-end
-
 local sX = 1
 local sY = 1
 local sheetRows = 7
 local sheetColumns = 7
-create(sX, sheetRows, sY, sheetColumns)
+tilePanel:render(mainGroup, sX, sheetRows, sY, sheetColumns)
 
 local function onKeyEvent(event)
 	local keyName = event.keyName
@@ -416,7 +341,6 @@ end
 
 Runtime:addEventListener("key", onKeyEvent)
 
-
 local sequenceData =
 {
 	name = "highlightTile",
@@ -428,12 +352,13 @@ local sequenceData =
 }
 
 local highlightTile = display.newSprite(imageSheet, sequenceData)
+highlightTile.x = -100
 
 local function mouse(event)
 	local x = event.x
 	local y = event.y
 
-	if (selectedTileId > 0) then
+	if (editor.selectedTileId > 0) then
 		for i = 1, #mapTiles do
 			local t = mapTiles[i]
 			
@@ -441,7 +366,7 @@ local function mouse(event)
 				if (y >= t.y - (t.height * 0.5) and y <= t.y + (t.height * 0.5)) then
 					highlightTile.x = t.x
 					highlightTile.y = t.y
-					highlightTile:setFrame(selectedTileId)
+					highlightTile:setFrame(editor.selectedTileId)
 					break
 				end
 			end
@@ -455,7 +380,7 @@ Runtime:addEventListener("mouse", mouse)
 
 local function run(event)
 	drawMap(1, (display.contentWidth / 32) + 2, 1, (display.contentHeight / 32) + 2)
-	create(sX, sheetRows, sY, sheetColumns)
+	tilePanel:render(mainGroup, sX, sheetRows, sY, sheetColumns)
 end
 
 Runtime:addEventListener("enterFrame", run)
