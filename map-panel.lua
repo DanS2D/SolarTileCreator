@@ -93,14 +93,30 @@ function M:new(topGroup, gridRows, gridColumns)
 		-- tool changed events
 		if (name == eventList.toolChanged) then
 			local tool = event.tool
+			local newTool = tool
 			
 			if (tool == toolList.brush) then
-				
 			elseif (tool == toolList.bucket) then
-				
 			elseif (tool == toolList.eraser) then
-
 			elseif (tool == toolList.clearAll) then
+				newTool = editor.previousTool
+				editor.selectedTool = newTool
+
+				local function onClearLayer(event)
+					if (event.action == "clicked") then
+						local index = event.index
+						
+						if (index == 1) then
+							for i = 1, gridRows do
+								for j = 1, gridColumns do
+									panel.layers[1][i][j] = 0
+								end
+							end
+						end
+					end
+				end
+				  
+				native.showAlert("Clear Layer?", "Are you sure you want to clear all tiles on this layer?", {"Yes", "No"}, onClearLayer)
 			elseif (tool == toolList.rotateLeft) then
 				highlightTile.rotation = highlightTile.rotation - 90
 			elseif (tool == toolList.rotateRight) then
@@ -110,6 +126,8 @@ function M:new(topGroup, gridRows, gridColumns)
 			elseif (tool == toolList.flipVertical) then
 				highlightTile.yScale = (highlightTile.yScale > 0) and -1 or 1
 			end
+
+			editor.previousTool = newTool
 		end
 
 		return true
@@ -155,13 +173,6 @@ function M:new(topGroup, gridRows, gridColumns)
 			if (panel.layers[1][tileIndex.x][tileIndex.y] ~= editor.selectedTileId) then
 				flood4(tileIndex.x, tileIndex.y, panel.layers[1][tileIndex.x][tileIndex.y])
 			end
-		-- clear all
-		elseif (editor.selectedTool == toolList.clearAll) then
-			for i = 1, gridRows do
-				for j = 1, gridColumns do
-					panel.layers[1][i][j] = 0
-				end
-			end
 		end
 
 		return true
@@ -170,12 +181,27 @@ function M:new(topGroup, gridRows, gridColumns)
 	local function mouseTile(event)
 		local target = event.target
 		local phase = event.type
+		highlightTile.isVisible = true
 
-		highlightTile.isVisible = (editor.selectedTileId > 0)
+		if (editor.selectedTool == nil) then
+			highlightTile.isVisible = false
+		elseif (editor.selectedTool == toolList.brush) or
+		 	(editor.selectedTool == toolList.bucket) then
+			if (editor.selectedTileId > 0) then
+				highlightTile:setFrame(editor.selectedTileId)
+				highlightTile.fill.effect = nil
+			else
+				highlightTile.isVisible = false
+			end
+		elseif (editor.selectedTool == toolList.eraser) then
+			highlightTile.fill.effect = "generator.linearGradient"
+			highlightTile.fill.effect.color1 = {0.8, 0, 0.2, 0.4}
+			highlightTile.fill.effect.position1 = {0, 0}
+			highlightTile.fill.effect.color2 = {0.2, 0.2, 0.2, 0.4}
+			highlightTile.fill.effect.position2 = {1, 1}
+		end
 
-		if (editor.selectedTileId > 0) then
-			highlightTile:setFrame(editor.selectedTileId)
-			highlightTile.isVisible = true
+		if (highlightTile.isVisible) then
 			highlightTile.x = target.x
 			highlightTile.y = target.y
 		end

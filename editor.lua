@@ -2,6 +2,7 @@ local M =
 {
 	selectedTileId = 0,
 	selectedTool = nil,
+	previousTool = nil,
 	toolList = {
 		brush = "brush",
 		bucket = "bucket",

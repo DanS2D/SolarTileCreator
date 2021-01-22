@@ -40,12 +40,7 @@ function M:new()
 				editor.selectedTool = toolList.eraser
 			end
 		},
-		{name = toolList.clearAll, icon = os.isLinux and "" or "trash",
-			action = function()
-				editor.selectedTileId = previousTileId
-				editor.selectedTool = toolList.clearAll
-			end
-		},
+		{name = toolList.clearAll, icon = os.isLinux and "" or "trash"},
 		{name = toolList.rotateLeft, icon = os.isLinux and "" or "reply-all"},
 		{name = toolList.rotateRight, icon = os.isLinux and "" or "share-all"},
 		{name = toolList.flipHorizontal, icon = os.isLinux and "" or "arrows-h"},
@@ -67,6 +62,7 @@ function M:new()
 			fillColor = theme:get().textColor.primary,
 			onClick = function(event)
 				local target = event.target
+				editor.selectedTool = target.name
 
 				local toolEvent = {
 					name = eventList.toolChanged,
@@ -84,7 +80,6 @@ function M:new()
 					previousTileId = editor.selectedTileId
 				end
 
-				editor.selectedTool = nil
 				target.fill = {0, 1, 1}
 				target.action()
 			end
@@ -126,8 +121,6 @@ function M:new()
 					newTool = toolList.bucket
 				elseif (keyName:lower() == "e") then
 					newTool = toolList.eraser
-				elseif (keyName:lower() == "c") then
-					newTool = toolList.clearAll
 				end
 
 				if (newTool ~= nil) then
