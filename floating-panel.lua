@@ -16,7 +16,7 @@ function M:new(options)
 
 	local menuBar = display.newRect(0, 0, width, 20)
 	menuBar.y = -(height * 0.5) - 10
-	menuBar.fill = theme:get().backgroundColor.secondary
+	menuBar.fill = theme:get().panelColor.primary
 	panel:insert(menuBar)
 
 	local background = display.newRect(0, 0, width, height)

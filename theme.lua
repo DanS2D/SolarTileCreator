@@ -7,6 +7,10 @@ local defaultThemes = {
 			secondary = {0.15, 0.15, 0.15, 1},
 			outline = {0.6, 0.6, 0.6, 0.5}
 		},
+		panelColor = {
+			primary = {0.18, 0.34, 0.88, 0.5},
+			secondary = {0.15, 0.15, 0.15, 1},
+		},
 		rowColor = {
 			primary = {0.10, 0.10, 0.10, 1},
 			over = {0.18, 0.18, 0.18, 1}
