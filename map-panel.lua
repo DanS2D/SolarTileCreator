@@ -56,8 +56,12 @@ function M:new(topGroup, gridRows, gridColumns)
 	highlightTile.isVisible = false
 	panel:insert(highlightTile)
 
-	for i = 1, gridRows * gridColumns do
-		panel.layers[1][i] = 0
+	for i = 1, gridRows do
+		panel.layers[1][i] = {}
+
+		for j = 1, gridColumns do
+			panel.layers[1][i][j] = 0
+		end
 	end
 
 	-- create overlay grid
@@ -73,25 +77,52 @@ function M:new(topGroup, gridRows, gridColumns)
 		end
 	end
 
-	local function placeTile(event)
+	local function flood4(x, y, startTileId)
+		if x < 1 or y < 1 then return end
+		if x > gridRows or y > gridColumns then return end
+		if not panel.layers[1][x][y] then return end
+
+		local actualValue = panel.layers[1][x][y]
+		
+		if actualValue and (actualValue == startTileId) then
+			panel.layers[1][x][y] = editor.selectedTileId
+			flood4(x + 1, y, startTileId)
+			flood4(x - 1, y, startTileId)
+			flood4(x, y + 1, startTileId)
+			flood4(x, y - 1, startTileId)
+		end
+	end
+
+	local function placeTileTouch(event)
 		local target = event.target
+		local tileIndex = target.tileIndex
 
 		-- normal 'paint' mode (nil) or eraser
 		if (editor.selectedTool == nil or editor.selectedTool == "eraser") then
-			panel.layers[1][target.tileIndex] = editor.selectedTileId
-		-- paint bucket (todo: fill between tiles, not just overwrite everything)
+			panel.layers[1][tileIndex.x][tileIndex.y] = editor.selectedTileId
+		end
+
+		return true
+	end
+
+	local function placeTileTap(event)
+		local target = event.target
+		local tileIndex = target.tileIndex
+
+		-- normal 'paint' mode (nil) or eraser
+		if (editor.selectedTool == nil or editor.selectedTool == "eraser") then
+			panel.layers[1][tileIndex.x][tileIndex.y] = editor.selectedTileId
+		-- paint bucket
 		elseif (editor.selectedTool == "bucket") then
-			for i = 1, #panel.layers[1] do
-				panel.layers[1][i] = editor.selectedTileId
-			end
+			flood4(tileIndex.x, tileIndex.y, panel.layers[1][tileIndex.x][tileIndex.y])
 		-- clear all
 		elseif (editor.selectedTool == "clear") then
-			for i = 1, #panel.layers[1] do
-				panel.layers[1][i] = 0
+			for i = 1, gridRows do
+				for j = 1, gridColumns do
+					panel.layers[1][i][j] = 0
+				end
 			end
 		end
-		--print(("map layer 1, tile index: %d now has tile %d"):format(target.tileIndex, selectedTileId))
-		--print("place tile tapped")
 
 		return true
 	end
@@ -139,8 +170,8 @@ function M:new(topGroup, gridRows, gridColumns)
 				end
 	
 				local index = (i + (self.xCount * j)) -- math: (x + (#mapRows * y))
-				local tileIndex = self.layers[1][index]
-	
+				local tileIndex = self.layers[1][i][j]
+
 				if (tileIndex > 0) then
 					self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
 				else
@@ -150,9 +181,9 @@ function M:new(topGroup, gridRows, gridColumns)
 					
 				self.tiles[#self.tiles].x = (iX * 32) - (panel.width * 0.5)
 				self.tiles[#self.tiles].y = (jY * 32) - (panel.height * 0.5)
-				self.tiles[#self.tiles].tileIndex = index	
-				self.tiles[#self.tiles]:addEventListener("tap", placeTile)
-				self.tiles[#self.tiles]:addEventListener("touch", placeTile)
+				self.tiles[#self.tiles].tileIndex = {x = i, y = j}	
+				self.tiles[#self.tiles]:addEventListener("tap", placeTileTap)
+				self.tiles[#self.tiles]:addEventListener("touch", placeTileTouch)
 				self.tiles[#self.tiles]:addEventListener("mouse", mouseTile)
 				self:insert(self.tiles[#self.tiles])
 			end
