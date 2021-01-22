@@ -1,6 +1,7 @@
 local M = {}
 
 os.isLinux = (system.getInfo("platform") == "linux")
+os.isMac = (system.getInfo("platform") == "macos")
 
 function _G.toboolean(value)
 	if (type(value) == "number") then

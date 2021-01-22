@@ -15,21 +15,37 @@ function M:new()
 
 	local buttons = {}
 	local previousTileId = 0
-
+	local toolList = editor.toolList
 	local tools = {
-		{name = "Eraser", icon = os.isLinux and "" or "eraser", action = function() 
+		{name = toolList.brush, icon = os.isLinux and "" or "paint-brush-alt", action = function() 
+			editor.selectedTool = toolList.brush
+
+			if (editor.selectedTileId == 0) then
+				editor.selectedTileId = previousTileId
+			end
+		end},
+		{name = toolList.bucket, icon = os.isLinux and "" or "fill-drip", action = function() 
+			editor.selectedTileId = previousTileId
+			editor.selectedTool = toolList.bucket
+		end},
+		{name = toolList.eraser, icon = os.isLinux and "" or "eraser", action = function() 
+			previousTileId = editor.selectedTileId
 			editor.selectedTileId = 0
-			editor.selectedTool = "eraser"
+			editor.selectedTool = toolList.eraser
 		end},
-		{name = "Clear", icon = os.isLinux and "" or "trash", action = function() 
+		{name = toolList.clearAll, icon = os.isLinux and "" or "trash", action = function() 
 			editor.selectedTileId = previousTileId
-			editor.selectedTool = "clear"
-		end},
-		{name = "Bucket", icon = os.isLinux and "" or "fill", action = function() 
-			editor.selectedTileId = previousTileId
-			editor.selectedTool = "bucket"
+			editor.selectedTool = toolList.clearAll
 		end},
 	}
+
+	local function resetButtons(target)
+		for j = 1, #buttons do
+			if (j ~= target.id) then
+				buttons[j].fill = theme:get().iconColor.primary
+			end
+		end
+	end
 
 	for i = 1, #tools do
 		buttons[i] = buttonLib.new({
@@ -38,35 +54,34 @@ function M:new()
 			fillColor = theme:get().textColor.primary,
 			onClick = function(event)
 				local target = event.target
-				target.on = not target.on
 
-				for j = 1, #buttons do
-					if (j ~= target.id) then
-						buttons[j].fill = theme:get().iconColor.primary
-						buttons[j].on = false
-					end
-				end
+				resetButtons(target)
 
 				if (editor.selectedTileId > 0) then
 					previousTileId = editor.selectedTileId
 				end
 
-				if (target.on) then
-					editor.selectedTool = nil
-					target.fill = {0, 1, 1}
-					tools[i].action()
-				else
-					editor.selectedTool = nil
-					editor.selectedTileId = previousTileId
-					target.fill = theme:get().iconColor.primary
-				end
+				editor.selectedTool = nil
+				target.fill = {0, 1, 1}
+				target.action()
 			end
 		})
 		buttons[i].x = (i * 20) - (panel.width * 0.5)
 		buttons[i].y = 0
 		buttons[i].id = i
-		buttons[i].on = false
+		buttons[i].name = tools[i].name
+		buttons[i].action = tools[i].action
 		panel:insert(buttons[i])
+	end
+
+	local function getButton(name)
+		for i = 1, #buttons do
+			if (buttons[i].name == name) then
+				return buttons[i]
+			end
+		end
+
+		return nil
 	end
 
 	function panel:render()
@@ -75,9 +90,39 @@ function M:new()
 	function panel:onKeyEvent(event)
 		local keyName = event.keyName
 		local phase = event.phase
+		local isCtrlDown = event.isCtrlDown
 		
-		if (keyName:lower() == "p") then
-		elseif (keyName:lower() == "o") then
+		if (isCtrlDown) then
+			if (phase == "up") then
+				local selectedButton = nil
+				local newTool = nil
+
+				if (keyName:lower() == "b") then
+					newTool = toolList.brush
+				elseif (keyName:lower() == "f") then
+					newTool = toolList.bucket
+				elseif (keyName:lower() == "e") then
+					newTool = toolList.eraser
+				elseif (keyName:lower() == "c") then
+					newTool = toolList.clearAll
+				end
+
+				if (newTool ~= nil) then
+					local selectedButton = getButton(newTool)
+
+					if (selectedButton ~= nil) then
+						resetButtons(selectedButton)
+
+						if (editor.selectedTileId > 0) then
+							previousTileId = editor.selectedTileId
+						end
+
+						editor.selectedTool = nil
+						selectedButton.fill = {0, 1, 1}
+						selectedButton.action()
+					end
+				end
+			end
 		end
 	end
 

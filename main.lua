@@ -196,6 +196,7 @@ tilePanel = tilesheetPanelWidget:new()
 local function onKeyEvent(event)
 	tilePanel:onKeyEvent(event)
 	mapPanel:onKeyEvent(event)
+	toolPanel:onKeyEvent(event)
 
 	return true
 end

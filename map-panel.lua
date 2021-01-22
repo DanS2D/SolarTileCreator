@@ -28,6 +28,7 @@ function M:new(topGroup, gridRows, gridColumns)
 	panel.startY = 1
 	panel.yCount = mFloor((panel.height / 32) - 1)
 
+	local toolList = editor.toolList
 	local overlay = {}
 	local tileSheetOptions =
 	{
@@ -82,9 +83,9 @@ function M:new(topGroup, gridRows, gridColumns)
 		if x > gridRows or y > gridColumns then return end
 		if not panel.layers[1][x][y] then return end
 
-		local actualValue = panel.layers[1][x][y]
+		local currentTileId = panel.layers[1][x][y]
 		
-		if actualValue and (actualValue == startTileId) then
+		if (currentTileId and (currentTileId == startTileId)) then
 			panel.layers[1][x][y] = editor.selectedTileId
 			flood4(x + 1, y, startTileId)
 			flood4(x - 1, y, startTileId)
@@ -98,7 +99,7 @@ function M:new(topGroup, gridRows, gridColumns)
 		local tileIndex = target.tileIndex
 
 		-- normal 'paint' mode (nil) or eraser
-		if (editor.selectedTool == nil or editor.selectedTool == "eraser") then
+		if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
 			panel.layers[1][tileIndex.x][tileIndex.y] = editor.selectedTileId
 		end
 
@@ -110,13 +111,15 @@ function M:new(topGroup, gridRows, gridColumns)
 		local tileIndex = target.tileIndex
 
 		-- normal 'paint' mode (nil) or eraser
-		if (editor.selectedTool == nil or editor.selectedTool == "eraser") then
+		if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
 			panel.layers[1][tileIndex.x][tileIndex.y] = editor.selectedTileId
 		-- paint bucket
-		elseif (editor.selectedTool == "bucket") then
-			flood4(tileIndex.x, tileIndex.y, panel.layers[1][tileIndex.x][tileIndex.y])
+		elseif (editor.selectedTool == toolList.bucket) then
+			if (panel.layers[1][tileIndex.x][tileIndex.y] ~= editor.selectedTileId) then
+				flood4(tileIndex.x, tileIndex.y, panel.layers[1][tileIndex.x][tileIndex.y])
+			end
 		-- clear all
-		elseif (editor.selectedTool == "clear") then
+		elseif (editor.selectedTool == toolList.clearAll) then
 			for i = 1, gridRows do
 				for j = 1, gridColumns do
 					panel.layers[1][i][j] = 0
