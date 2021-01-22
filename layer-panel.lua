@@ -7,6 +7,11 @@ function M:new()
 		width = (display.contentWidth * 0.4),
 		height = (display.contentHeight * 0.24),
 		title = "Layers",
+		buttons = {
+			{icon = os.isLinux and "" or "plus", action = function() 
+				
+			end},
+		},
 	})
 	panel.x = (display.contentWidth - (panel.width * 0.5))
 	panel.y = ((panel.height * 0.5) + 85)

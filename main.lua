@@ -18,7 +18,6 @@ local tilePanel = nil
 local mapPanel = nil
 
 math.randomseed(os.time())
-display.setDefault("background", 48 / 255, 87 / 255, 225 / 255)
 
 -- create the main menu bar
 applicationMainMenuBar =
@@ -101,10 +100,10 @@ applicationMainMenuBar =
 				title = "View",
 				subItems = {
 					{
-						title = "Show Tile Panel",
+						title = "TODO",
 						iconName = os.isLinux and "" or "th-large",
 						onClick = function(event)
-							tilePanel:open(true)
+							
 						end
 					}
 				}

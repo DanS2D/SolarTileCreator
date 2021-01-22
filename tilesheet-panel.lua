@@ -16,6 +16,11 @@ function M:new()
 		width = (display.contentWidth * 0.4),
 		height = (display.contentHeight * 0.5) + 10,
 		title = ("Tiles (%d Tiles)"):format(tileSheetOptions.numFrames),
+		buttons = {
+			{icon = os.isLinux and "" or "folder-open", action = function() 
+				
+			end},
+		},
 	})
 	panel.x = (display.contentWidth - (panel.width * 0.5))
 	panel.y = (display.contentHeight - (panel.height * 0.5) + 12)

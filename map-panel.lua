@@ -179,7 +179,7 @@ function M:new(topGroup, gridRows, gridColumns)
 					self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
 				else
 					self.tiles[#self.tiles + 1] = display.newRect(0, 0, 32, 32)
-					self.tiles[#self.tiles]:setFillColor(48 / 255, 87 / 255, 225 / 255)
+					self.tiles[#self.tiles]:setFillColor(0.25, 0.25, 0.25)
 				end
 					
 				self.tiles[#self.tiles].x = (iX * 32) - (panel.width * 0.5)

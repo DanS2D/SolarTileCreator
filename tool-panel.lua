@@ -11,7 +11,7 @@ function M:new()
 		title = "Tools",
 	})
 	panel.x = (display.contentWidth - (panel.width * 0.5))
-	panel.y = ((panel.height * 0.5) + 35)
+	panel.y = ((panel.height * 0.5) + 36)
 
 	local buttons = {}
 	local previousTileId = 0

@@ -11,6 +11,8 @@ function M:new(options)
 	local content = display.newGroup()
 	local width = options.width or (display.contentWidth / 3)
 	local height = options.height or (display.contentHeight / 3)
+	local buttons = options.buttons
+	local panelButtons = {}
 
 	local menuBar = display.newRect(0, 0, width, 20)
 	menuBar.y = -(height * 0.5) - 10
@@ -35,66 +37,29 @@ function M:new(options)
 	titleText.fill = theme:get().textColor.primary
 	panel:insert(titleText)
 
-	local closeButton = buttonLib.new({
-		iconName = os.isLinux and "" or "window-close",
-		fontSize = 14,
-		fillColor = theme:get().textColor.primary,
-		onClick = function(event)
-			panel:open(false)
-		end
-	})
-	closeButton.x = (background.width * 0.5) - 10
-	closeButton.y = (menuBar.y - 1)
-	panel:insert(closeButton)
-
-	local minimizeButton = buttonLib.new({
-		iconName = os.isLinux and "" or "window-minimize",
-		fontSize = 14,
-		fillColor = theme:get().textColor.primary,
-		onClick = function(event)
-			panel.minimized = not panel.minimized
-			panel:minimize(panel.minimized)
-		end
-	})
-	minimizeButton.x = (closeButton.x - (closeButton.width * 0.5) - 10)
-	minimizeButton.y = closeButton.y
-	panel:insert(minimizeButton)
-
-	function panel:open(isOpen)
-		self.isVisible = isOpen
-		self.closed = (not self.isVisible)
-	end
-
-	function panel:minimize(isMinimized)
-		local outTime = 150
-
-		if (self.closed) then
-			self.minimized = false
-			return
-		end
-
-		self.minimized = isMinimized
-
-		if (self.minimized) then
-			content.isVisible = false
-
-			if (panel.oldY == nil) then
-				panel.oldY = panel.y
-			end
-
-			panel.y = (display.contentHeight + (panel.contentHeight / 2) - (menuBar.contentHeight / 2))
-		else
-			content.isVisible = true
-			panel.y = panel.oldY
+	if (type(buttons) == "table" and #buttons > 0) then
+		for i = 1, #buttons do
+			panelButtons[i] = buttonLib.new({
+				iconName = buttons[i].icon,
+				fontSize = 14,
+				fillColor = theme:get().textColor.primary,
+				onClick = function(event)
+					local target = event.target
+					target.action()
+				end
+			})
+			panelButtons[i].x = (background.width * 0.5) + 9 - (i * 20)
+			panelButtons[i].y = (menuBar.y - 1)
+			panelButtons[i].id = i
+			panelButtons[i].name = buttons[i].name
+			panelButtons[i].action = buttons[i].action
+			panel:insert(panelButtons[i])
 		end
 	end
 
-	content.allowMinimize = true
 	content.anchorChildren = true
 	panel:insert(content)
 	panel.oldInsert = panel.insert
-	panel.closed = false
-	panel.minimized = false
 	panel.content = content
 	panel.x = display.contentCenterX
 	panel.y = display.contentCenterY
