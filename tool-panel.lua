@@ -6,8 +6,8 @@ local M = {}
 
 function M:new()
 	local panel = floatingPanel:new({
-		width = (display.contentWidth * 0.4),
-		height = 30,
+		width = (display.contentWidth * 0.4) - 8,
+		height = 27,
 		title = "Tools",
 	})
 	panel.x = (display.contentWidth - (panel.width * 0.5))

@@ -21,6 +21,8 @@ function M:new(options)
 
 	local background = display.newRect(0, 0, width, height)
 	background.fill = options.backgroundColor or theme:get().backgroundColor.primary
+	background.strokeWidth = 1
+	background.stroke = theme:get().backgroundColor.outline
 	background:addEventListener("tap", function() return true end)
 	background:addEventListener("touch", function() return true end)
 	content:insert(background)

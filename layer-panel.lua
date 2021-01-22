@@ -4,8 +4,8 @@ local M = {}
 
 function M:new()
 	local panel = floatingPanel:new({
-		width = (display.contentWidth * 0.4),
-		height = (display.contentHeight * 0.24),
+		width = (display.contentWidth * 0.4) - 8,
+		height = (display.contentHeight * 0.24) - 5,
 		title = "Layers",
 		buttons = {
 			{icon = os.isLinux and "" or "plus", action = function() 

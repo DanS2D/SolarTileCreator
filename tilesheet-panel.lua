@@ -13,7 +13,7 @@ function M:new()
 	}
 
 	local panel = floatingPanel:new({
-		width = (display.contentWidth * 0.4),
+		width = (display.contentWidth * 0.4) - 8,
 		height = (display.contentHeight * 0.5) + 10,
 		title = ("Tiles (%d Tiles)"):format(tileSheetOptions.numFrames),
 		buttons = {
@@ -81,7 +81,7 @@ function M:new()
 				local tileIndex = (i + (108 * j)) -- math: (x + (#mapRows * y))
 	
 				self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
-				self.tiles[#self.tiles].x = (iX * 34) - (panel.width * 0.5) - 8
+				self.tiles[#self.tiles].x = (iX * 34) - (panel.width * 0.5) - 12
 				self.tiles[#self.tiles].y = (jY * 34) - (panel.height * 0.5)
 				self.tiles[#self.tiles].tileIndex = tileIndex
 	
