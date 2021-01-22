@@ -17,7 +17,7 @@ function M:new(topGroup, gridRows, gridColumns)
 	local panel = floatingPanel:new({
 		width = display.contentWidth - (display.contentWidth * 0.4),
 		height = (display.contentHeight) - 47,
-		title = "Map",
+		title = ("Map (%dx%d - %d Tiles)"):format(gridRows, gridColumns, gridRows * gridColumns),
 	})
 	panel.x = (panel.width * 0.5)
 	panel.y = (panel.height * 0.5) + 36
@@ -75,7 +75,21 @@ function M:new(topGroup, gridRows, gridColumns)
 
 	local function placeTile(event)
 		local target = event.target
-		panel.layers[1][target.tileIndex] = editor.selectedTileId
+
+		-- normal 'paint' mode (nil) or eraser
+		if (editor.selectedTool == nil or editor.selectedTool == "eraser") then
+			panel.layers[1][target.tileIndex] = editor.selectedTileId
+		-- paint bucket (todo: fill between tiles, not just overwrite everything)
+		elseif (editor.selectedTool == "bucket") then
+			for i = 1, #panel.layers[1] do
+				panel.layers[1][i] = editor.selectedTileId
+			end
+		-- clear all
+		elseif (editor.selectedTool == "clear") then
+			for i = 1, #panel.layers[1] do
+				panel.layers[1][i] = 0
+			end
+		end
 		--print(("map layer 1, tile index: %d now has tile %d"):format(target.tileIndex, selectedTileId))
 		--print("place tile tapped")
 

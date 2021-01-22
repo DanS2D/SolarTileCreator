@@ -4,13 +4,18 @@ local solarTiled = require("solarTilesCreator")
 local luaExt = require("lua-ext")
 local mainMenuBar = require("main-menu-bar")
 local editor = require("editor")
-local tilesheetPanel = require("tilesheet-panel")
-local mapPanel = require("map-panel")
+local toolPanelWidget = require("tool-panel")
+local layerPanelWidget = require("layer-panel")
+local tilesheetPanelWidget = require("tilesheet-panel")
+local mapPanelWidget = require("map-panel")
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
 local fontAwesomeBrandsFont = "fonts/FA5-Brands-Regular.ttf"
 local applicationMainMenuBar = nil
+local toolPanel = nil
+local layerPanel = nil
 local tilePanel = nil
+local mapPanel = nil
 
 math.randomseed(os.time())
 display.setDefault("background", 48 / 255, 87 / 255, 225 / 255)
@@ -183,8 +188,10 @@ local bottomGroup = display.newGroup()
 local topGroup = display.newGroup()
 
 -- create the panels
-mapPanel = mapPanel:new(topGroup, 100, 100)
-tilePanel = tilesheetPanel:new()
+toolPanel = toolPanelWidget:new()
+layerPanel = layerPanelWidget:new()
+mapPanel = mapPanelWidget:new(topGroup, 100, 100)
+tilePanel = tilesheetPanelWidget:new()
 
 local function onKeyEvent(event)
 	tilePanel:onKeyEvent(event)

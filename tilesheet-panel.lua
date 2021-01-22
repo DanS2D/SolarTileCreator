@@ -3,10 +3,19 @@ local editor = require("editor")
 local M = {}
 
 function M:new()
+	local tileSheetOptions =
+	{
+		width = 32,
+		height = 32,
+		numFrames = 8640,
+		sheetContentWidth = 3456, -- width of original 1x size of entire sheet
+		sheetContentHeight = 2560 -- height of original 1x size of entire sheet
+	}
+
 	local panel = floatingPanel:new({
 		width = (display.contentWidth * 0.4),
 		height = (display.contentHeight * 0.5) + 10,
-		title = "Tiles",
+		title = ("Tiles (%d Tiles)"):format(tileSheetOptions.numFrames),
 	})
 	panel.x = (display.contentWidth - (panel.width * 0.5))
 	panel.y = (display.contentHeight - (panel.height * 0.5) + 12)
@@ -16,15 +25,6 @@ function M:new()
 	panel.startY = 1
 	panel.yCount = 7
 	panel.tileGroup = display.newGroup()
-
-	local tileSheetOptions =
-	{
-		width = 32,
-		height = 32,
-		numFrames = 8640,
-		sheetContentWidth = 3456, -- width of original 1x size of entire sheet
-		sheetContentHeight = 2560 -- height of original 1x size of entire sheet
-	}
 
 	local imageSheet = graphics.newImageSheet("data/tiles/tilesheet_complete_2X.png", tileSheetOptions)
 

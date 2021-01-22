@@ -1,6 +1,7 @@
 local M = 
 {
-	selectedTileId = 0
+	selectedTileId = 0,
+	selectedTool = nil,
 }
 
 return M
