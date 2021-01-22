@@ -31,19 +31,19 @@ applicationMainMenuBar =
 				subItems = {
 					{
 						title = "Load Map",
-						iconName = _G.isLinux and "" or "folder-plus",
+						iconName = os.isLinux and "" or "folder-open",
 						onClick = function()
 						end
 					},
 					{
 						title = "Save Map",
-						iconName = _G.isLinux and "" or "file-music",
+						iconName = os.isLinux and "" or "save",
 						onClick = function()
 						end
 					},
 					{
 						title = "Exit",
-						iconName = _G.isLinux and "" or "power-off",
+						iconName = os.isLinux and "" or "power-off",
 						onClick = function()
 							native.requestExit()
 						end
@@ -54,11 +54,47 @@ applicationMainMenuBar =
 				title = "Edit",
 				subItems = {
 					{
+						title = "Undo",
+						iconName = os.isLinux and "" or "undo-alt",
+						onClick = function(event)
+						end
+					},
+					{
+						title = "Redo",
+						iconName = os.isLinux and "" or "redo-alt",
+						onClick = function(event)
+						end
+					},
+					{
+						title = "Rotate Left",
+						iconName = os.isLinux and "" or "reply-all",
+						onClick = function(event)
+						end
+					},
+					{
+						title = "Rotate Right",
+						iconName = os.isLinux and "" or "share-all",
+						onClick = function(event)
+						end
+					},
+					{
+						title = "Flip Horizontal",
+						iconName = os.isLinux and "" or "arrows-h",
+						onClick = function(event)
+						end
+					},
+					{
+						title = "Flip Vertical",
+						iconName = os.isLinux and "" or "arrows-v",
+						onClick = function(event)
+						end
+					},
+					{
 						title = "Preferences",
 						iconName = os.isLinux and "" or "tools",
 						onClick = function(event)
 						end
-					}
+					},
 				}
 			},
 			{

@@ -37,6 +37,18 @@ function M:new()
 			editor.selectedTileId = previousTileId
 			editor.selectedTool = toolList.clearAll
 		end},
+		{name = toolList.rotateLeft, icon = os.isLinux and "" or "reply-all", action = function() 
+			
+		end},
+		{name = toolList.rotateRight, icon = os.isLinux and "" or "share-all", action = function() 
+			
+		end},
+		{name = toolList.flipHorizontal, icon = os.isLinux and "" or "arrows-h", action = function() 
+			
+		end},
+		{name = toolList.flipVertical, icon = os.isLinux and "" or "arrows-v", action = function() 
+			
+		end},
 	}
 
 	local function resetButtons(target)
