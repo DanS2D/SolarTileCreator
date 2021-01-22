@@ -16,39 +16,40 @@ function M:new()
 	local buttons = {}
 	local previousTileId = 0
 	local toolList = editor.toolList
+	local eventList = editor.eventList
 	local tools = {
-		{name = toolList.brush, icon = os.isLinux and "" or "paint-brush-alt", action = function() 
-			editor.selectedTool = toolList.brush
+		{name = toolList.brush, icon = os.isLinux and "" or "paint-brush-alt",
+			action = function()
+				editor.selectedTool = toolList.brush
 
-			if (editor.selectedTileId == 0) then
-				editor.selectedTileId = previousTileId
+				if (editor.selectedTileId == 0) then
+					editor.selectedTileId = previousTileId
+				end
 			end
-		end},
-		{name = toolList.bucket, icon = os.isLinux and "" or "fill-drip", action = function() 
-			editor.selectedTileId = previousTileId
-			editor.selectedTool = toolList.bucket
-		end},
-		{name = toolList.eraser, icon = os.isLinux and "" or "eraser", action = function() 
-			previousTileId = editor.selectedTileId
-			editor.selectedTileId = 0
-			editor.selectedTool = toolList.eraser
-		end},
-		{name = toolList.clearAll, icon = os.isLinux and "" or "trash", action = function() 
-			editor.selectedTileId = previousTileId
-			editor.selectedTool = toolList.clearAll
-		end},
-		{name = toolList.rotateLeft, icon = os.isLinux and "" or "reply-all", action = function() 
-			
-		end},
-		{name = toolList.rotateRight, icon = os.isLinux and "" or "share-all", action = function() 
-			
-		end},
-		{name = toolList.flipHorizontal, icon = os.isLinux and "" or "arrows-h", action = function() 
-			
-		end},
-		{name = toolList.flipVertical, icon = os.isLinux and "" or "arrows-v", action = function() 
-			
-		end},
+		},
+		{name = toolList.bucket, icon = os.isLinux and "" or "fill-drip",
+			action = function()
+				editor.selectedTileId = previousTileId
+				editor.selectedTool = toolList.bucket
+			end
+		},
+		{name = toolList.eraser, icon = os.isLinux and "" or "eraser",
+			action = function()
+				previousTileId = editor.selectedTileId
+				editor.selectedTileId = 0
+				editor.selectedTool = toolList.eraser
+			end
+		},
+		{name = toolList.clearAll, icon = os.isLinux and "" or "trash",
+			action = function()
+				editor.selectedTileId = previousTileId
+				editor.selectedTool = toolList.clearAll
+			end
+		},
+		{name = toolList.rotateLeft, icon = os.isLinux and "" or "reply-all"},
+		{name = toolList.rotateRight, icon = os.isLinux and "" or "share-all"},
+		{name = toolList.flipHorizontal, icon = os.isLinux and "" or "arrows-h"},
+		{name = toolList.flipVertical, icon = os.isLinux and "" or "arrows-v"},
 	}
 
 	local function resetButtons(target)
@@ -66,6 +67,16 @@ function M:new()
 			fillColor = theme:get().textColor.primary,
 			onClick = function(event)
 				local target = event.target
+
+				local toolEvent = {
+					name = eventList.toolChanged,
+					tool = target.name
+				}
+				Runtime:dispatchEvent(toolEvent)
+
+				if (not target.action) then
+					return
+				end
 
 				resetButtons(target)
 

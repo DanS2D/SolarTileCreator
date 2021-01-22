@@ -37,6 +37,7 @@ function M:new(topGroup, gridRows, gridColumns)
 	panel.yCount = mFloor((panel.height / 32) - 1)
 
 	local toolList = editor.toolList
+	local eventList = editor.eventList
 	local overlay = {}
 	local tileSheetOptions =
 	{
@@ -81,9 +82,37 @@ function M:new(topGroup, gridRows, gridColumns)
 			overlay[#overlay]:setFillColor(0, 0, 0, 0.01)
 			overlay[#overlay]:setStrokeColor(1, 1, 1, 0.5)
 			overlay[#overlay].x = (i * 32) - (panel.width * 0.5)
-			overlay[#overlay].y = (j * 32) - (panel.height * 0.5)
+			overlay[#overlay].y = (j * 32) - (panel.height * 0.5) + 3
 			panel:insert(overlay[#overlay])
 		end
+	end
+
+	local function onEditorEvent(event)
+		local name = event.name
+
+		-- tool changed events
+		if (name == eventList.toolChanged) then
+			local tool = event.tool
+			
+			if (tool == toolList.brush) then
+				
+			elseif (tool == toolList.bucket) then
+				
+			elseif (tool == toolList.eraser) then
+
+			elseif (tool == toolList.clearAll) then
+			elseif (tool == toolList.rotateLeft) then
+				highlightTile.rotation = highlightTile.rotation - 90
+			elseif (tool == toolList.rotateRight) then
+				highlightTile.rotation = highlightTile.rotation + 90
+			elseif (tool == toolList.flipHorizontal) then
+				highlightTile.xScale = (highlightTile.xScale > 0) and -1 or 1
+			elseif (tool == toolList.flipVertical) then
+				highlightTile.yScale = (highlightTile.yScale > 0) and -1 or 1
+			end
+		end
+
+		return true
 	end
 
 	local function flood4(x, y, startTileId)
@@ -191,7 +220,7 @@ function M:new(topGroup, gridRows, gridColumns)
 				end
 					
 				self.tiles[#self.tiles].x = (iX * 32) - (panel.width * 0.5)
-				self.tiles[#self.tiles].y = (jY * 32) - (panel.height * 0.5)
+				self.tiles[#self.tiles].y = (jY * 32) - (panel.height * 0.5) + 3
 				self.tiles[#self.tiles].tileIndex = {x = i, y = j}	
 				self.tiles[#self.tiles]:addEventListener("tap", placeTileTap)
 				self.tiles[#self.tiles]:addEventListener("touch", placeTileTouch)
@@ -237,6 +266,8 @@ function M:new(topGroup, gridRows, gridColumns)
 			end
 		end
 	end
+
+	Runtime:addEventListener(eventList.toolChanged, onEditorEvent)
 
 	return panel
 end

@@ -12,6 +12,9 @@ local M =
 		flipHorizontal = "flipHorizontal",
 		flipVertical = "flipVertical"
 	},
+	eventList = {
+		toolChanged = "toolChanged",
+	}
 }
 
 return M
