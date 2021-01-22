@@ -30,32 +30,14 @@ applicationMainMenuBar =
 				title = "File",
 				subItems = {
 					{
-						title = "Add Music Folder",
+						title = "Load Map",
 						iconName = _G.isLinux and "" or "folder-plus",
 						onClick = function()
 						end
 					},
 					{
-						title = "Add Music File(s)",
+						title = "Save Map",
 						iconName = _G.isLinux and "" or "file-music",
-						onClick = function()
-						end
-					},
-					{
-						title = "Import Music Library",
-						iconName = _G.isLinux and "" or "file-import",
-						onClick = function()
-						end
-					},
-					{
-						title = "Export Music Library",
-						iconName = _G.isLinux and "" or "file-export",
-						onClick = function()
-						end
-					},
-					{
-						title = "Delete Music Library",
-						iconName = _G.isLinux and "" or "trash",
 						onClick = function()
 						end
 					},
@@ -80,55 +62,8 @@ applicationMainMenuBar =
 				}
 			},
 			{
-				title = "Music",
-				subItems = {
-					{
-						title = "Fade In Track",
-						iconName = os.isLinux and "" or "turntable",
-						useCheckmark = true,
-						checkMarkIsOn = false,
-						onClick = function(event)
-						end
-					},
-					{
-						title = "Fade Out Track",
-						iconName = os.isLinux and "" or "turntable",
-						useCheckmark = true,
-						checkMarkIsOn = false,
-						onClick = function(event)
-						end
-					},
-					{
-						title = "Crossfade",
-						iconName = os.isLinux and "" or "music",
-						useCheckmark = true,
-						checkMarkIsOn = false,
-						onClick = function(event)
-						end
-					}
-				}
-			},
-			{
 				title = "View",
 				subItems = {
-					{
-						title = "Light Theme",
-						iconName = os.isLinux and "" or "palette",
-						onClick = function(event)
-						end
-					},
-					{
-						title = "Dark Theme",
-						iconName = os.isLinux and "" or "palette",
-						onClick = function(event)
-						end
-					},
-					{
-						title = "Hacker Theme",
-						iconName = os.isLinux and "" or "palette",
-						onClick = function(event)
-						end
-					},
 					{
 						title = "Show Tile Panel",
 						iconName = os.isLinux and "" or "th-large",
