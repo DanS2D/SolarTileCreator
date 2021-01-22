@@ -18,6 +18,14 @@ function M:new(topGroup, gridRows, gridColumns)
 		width = display.contentWidth - (display.contentWidth * 0.4),
 		height = (display.contentHeight) - 47,
 		title = ("Map (%dx%d - %d Tiles)"):format(gridRows, gridColumns, gridRows * gridColumns),
+		buttons = {
+			{icon = os.isLinux and "" or "search", action = function() 
+				
+			end},
+			{icon = os.isLinux and "" or "search-minus", action = function() 
+				
+			end},
+		},
 	})
 	panel.x = (panel.width * 0.5)
 	panel.y = (panel.height * 0.5) + 36

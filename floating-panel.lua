@@ -48,7 +48,7 @@ function M:new(options)
 					target.action()
 				end
 			})
-			panelButtons[i].x = (background.width * 0.5) + 9 - (i * 20)
+			panelButtons[i].x = (background.width * 0.5) + 5 - (i * 20)
 			panelButtons[i].y = (menuBar.y - 1)
 			panelButtons[i].id = i
 			panelButtons[i].name = buttons[i].name
