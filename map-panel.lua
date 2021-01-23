@@ -117,9 +117,7 @@ function M:new(topGroup, gridRows, gridColumns)
 				end
 				  
 				native.showAlert("Clear Layer?", "Are you sure you want to clear all tiles on this layer?", {"Yes", "No"}, onClearLayer)
-			elseif (tool == toolList.rotateLeft) then
-				highlightTile.rotation = highlightTile.rotation - 90
-			elseif (tool == toolList.rotateRight) then
+			elseif (tool == toolList.rotate) then
 				highlightTile.rotation = highlightTile.rotation + 90
 			elseif (tool == toolList.flipHorizontal) then
 				highlightTile.xScale = (highlightTile.xScale > 0) and -1 or 1

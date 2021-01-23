@@ -15,8 +15,7 @@ local M =
 		bucket = "bucket",
 		eraser = "eraser",
 		clearAll = "clearAll",
-		rotateRight = "rotateRight",
-		rotateLeft = "rotateLeft",
+		rotate = "rotate",
 		flipHorizontal = "flipHorizontal",
 		flipVertical = "flipVertical"
 	},

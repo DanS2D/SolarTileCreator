@@ -71,14 +71,8 @@ applicationMainMenuBar =
 						end
 					},
 					{
-						title = "Rotate Left",
-						iconName = os.isLinux and "" or "reply-all",
-						onClick = function(event)
-						end
-					},
-					{
-						title = "Rotate Right",
-						iconName = os.isLinux and "" or "share-all",
+						title = "Rotate",
+						iconName = os.isLinux and "" or "sync-alt",
 						onClick = function(event)
 						end
 					},

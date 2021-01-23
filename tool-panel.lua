@@ -41,8 +41,7 @@ function M:new()
 			end
 		},
 		{name = toolList.clearAll, icon = os.isLinux and "" or "trash"},
-		{name = toolList.rotateLeft, icon = os.isLinux and "" or "reply-all"},
-		{name = toolList.rotateRight, icon = os.isLinux and "" or "share-all"},
+		{name = toolList.rotate, icon = os.isLinux and "" or "sync-alt"},
 		{name = toolList.flipHorizontal, icon = os.isLinux and "" or "arrows-h"},
 		{name = toolList.flipVertical, icon = os.isLinux and "" or "arrows-v"},
 	}

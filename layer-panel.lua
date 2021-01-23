@@ -109,6 +109,7 @@ function M:new()
 			})
 			deleteButton.x = moveToBottomButton.x + buttonWidth
 			deleteButton.fill = theme:get().iconColor.primary
+			deleteButton.isVisible = (row.index > 1)
 			row:insert(deleteButton)
 
 			local subItemText =
