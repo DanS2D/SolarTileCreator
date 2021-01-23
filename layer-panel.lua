@@ -140,6 +140,63 @@ function M:new()
 	tableView:createRows()
 	panel.content:insert(tableView)
 
+	-- START LAYER DATA STRUCTURE TEST--
+
+	--[[
+		data layout
+		{
+			name = "one", -- the map layer name (shown in layer panel for this layer)
+			index = 1, -- the layer rendering index (1 = top) - matches the order of the layer in the layers panel
+			data = {}, -- the map layer data for this layer
+		}
+	--]]
+
+	local test = {
+		{
+			name = "one",
+			index = 1,
+			data = {},
+		},
+		{
+			name = "Three",
+			index = 3,
+			data = {},
+		},
+		{
+			name = "five",
+			index = 5,
+			data = {},
+		},
+		{
+			name = "Four",
+			index = 4,
+			data = {},
+		},
+		{
+			name = "two",
+			index = 2,
+			data = {},
+		},
+	}
+
+	local function sort(a, b)
+		return a.index < b.index
+	end
+
+	local json = require("json")
+
+	print("------ OLD -------")
+	print(json.prettify(test))
+	print("------ NEW -------")
+	local startSec = os.time(os.date("*t"))
+	table.sort(test, sort)
+	local endSec = os.time(os.date("*t"))
+	print(json.prettify(test))
+	print(startSec, endSec)
+	print("sort time:", endSec - startSec)
+	-- sorting seems really fast. Looks like this system will work nicely.
+	-- END LAYER DATA STRUCTURE TEST--
+
 	function panel:render()
 	end
 
