@@ -84,7 +84,7 @@ function M:new()
 				target.action()
 			end
 		})
-		buttons[i].x = (i * 20) - (panel.width * 0.5)
+		buttons[i].x = (i * 20) - (panel.width * 0.5) - 6
 		buttons[i].y = 0
 		buttons[i].id = i
 		buttons[i].name = tools[i].name

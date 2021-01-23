@@ -7,11 +7,11 @@ local subTitleFont = "fonts/Jost-400-Book.ttf"
 
 function M:new(options)
 	local title = options.title or error("floating-panel:new(options) title (string) expected, got", type(options.title))
-	local panel = display.newGroup()
-	local content = display.newGroup()
 	local width = options.width or (display.contentWidth / 3)
 	local height = options.height or (display.contentHeight / 3)
 	local buttons = options.buttons
+	local panel = display.newGroup()
+	local content = display.newContainer(width - 2, height - 2)
 	local panelButtons = {}
 
 	local menuBar = display.newRect(0, 0, width, 20)
@@ -25,7 +25,7 @@ function M:new(options)
 	background.stroke = theme:get().backgroundColor.outline
 	background:addEventListener("tap", function() return true end)
 	background:addEventListener("touch", function() return true end)
-	content:insert(background)
+	panel:insert(background)
 
 	local titleText = display.newText({
 		text = title,
@@ -59,7 +59,8 @@ function M:new(options)
 		end
 	end
 
-	content.anchorChildren = true
+	panel.anchorChildren = false
+	content.anchorChildren = false
 	panel:insert(content)
 	panel.oldInsert = panel.insert
 	panel.content = content
