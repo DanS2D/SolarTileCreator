@@ -1,5 +1,6 @@
 local floatingPanel = require("floating-panel")
 local editor = require("editor")
+local tfd = require("plugin.tinyFileDialogs")
 local M = {}
 
 function M:new()
@@ -17,9 +18,25 @@ function M:new()
 		height = (display.contentHeight * 0.5) + 10,
 		title = ("Tiles (%d Tiles)"):format(tileSheetOptions.numFrames),
 		buttons = {
-			{icon = os.isLinux and "" or "folder-open", action = function() 
-				
-			end},
+			{icon = os.isLinux and "" or "folder-open", 
+				action = function()
+					local foundFile = tfd.openFileDialog(
+						{
+							title = "Select Tilesheet",
+							initialPath = os.homePath,
+							filters = {"*.png", "*.jpg"},
+							singleFilterDescription = "Image Files| *.png;*.jpg etc",
+							multiSelect = false
+						}
+					)
+
+					if (foundFile ~= nil) then
+						-- if path is relative to the CWD, it will return
+						-- say data/tiles/x.png, rather than /Users/X/Documents/...
+						print("found file:", foundFile)
+					end
+				end
+			},
 		},
 	})
 	panel.x = (display.contentWidth - (panel.width * 0.5))

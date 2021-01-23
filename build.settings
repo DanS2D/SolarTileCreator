@@ -1,10 +1,63 @@
 settings =
 {
-    plugins =
-    {
-        ["plugin.bit"] =
-        {
-            publisherId = "com.coronalabs"
-        },
-    },
+	plugins =
+	{
+		["plugin.bit"] = { publisherId = "com.coronalabs"},
+		["plugin.tinyFileDialogs"] = {
+			publisherId = "com.revolt64",
+			supportedPlatforms = {
+				["win32-sim"] = {url = "https://github.com/DannyGlover/Solar2D-TinyFileDialogs-Plugin/raw/master/dist/v1/win32-sim/data.tgz"},
+				["mac-sim"] = {url = "https://github.com/DannyGlover/Solar2D-TinyFileDialogs-Plugin/raw/master/dist/v1/mac-sim/data.tgz"}
+			}
+		},
+	},
+	orientation =
+	{
+		-- Supported values for orientation:
+		-- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
+		default = "portrait",
+		supported = { "portrait", },
+	},
+	win32 =
+	{
+		singleInstance = true,
+	},
+	build =
+	{
+		neverStripDebugInfo = true,
+	},
+	window =
+	{
+		defaultMode = "normal",
+		minViewWidth = 640,
+		minViewHeight = 480,
+		defaultViewWidth = 640,
+		defaultViewHeight = 480,
+		resizable = true,
+		enableMinimizeButton = true,
+		enableMaximizeButton = true,
+		enableCloseButton = true,
+		suspendWhenMinimized = false,
+		titleText = {
+			default = "SolarTiles Creator", -- if not language specific entry is found
+			["en‐us"] = "SolarTiles Creator", -- USA
+			["en‐gb"] = "SolarTiles Creator", -- britain
+			["en"] = "SolarTiles Creator", -- general english
+			["de"] = "SolarTiles Creator", -- german
+			["fr"] = "SolarTiles Creator", -- french
+			["es"] = "SolarTiles Creator", -- spanish
+			["pt"] = "SolarTiles Creator", -- portugese
+			["it"] = "SolarTiles Creator", -- italian
+			["nl"] = "SolarTiles Creator", -- dutch
+			["pl"] = "SolarTiles Creator", -- polish
+			["ru"] = "SolarTiles Creator", -- russian
+			["da"] = "SolarTiles Creator", -- danish
+			["fi"] = "SolarTiles Creator", -- finnish
+			["el"] = "SolarTiles Creator", -- greek
+			["no"] = "SolarTiles Creator", -- norwegian
+			["ro"] = "SolarTiles Creator", -- romanian
+			["sv"] = "SolarTiles Creator", -- swedish
+			["tr"] = "SolarTiles Creator", -- turkish
+		},
+	},
 }

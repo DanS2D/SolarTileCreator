@@ -2,6 +2,8 @@ local M = {}
 
 os.isLinux = (system.getInfo("platform") == "linux")
 os.isMac = (system.getInfo("platform") == "macos")
+os.isWindows = (system.getInfo("platform") == "windows")
+os.homePath = (isWindows and "%HOMEPATH%\\") or os.getenv("HOME") .. "/"
 
 function _G.toboolean(value)
 	if (type(value) == "number") then
