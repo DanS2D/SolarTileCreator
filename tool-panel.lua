@@ -120,6 +120,12 @@ function M:new()
 					newTool = toolList.bucket
 				elseif (keyName:lower() == "e") then
 					newTool = toolList.eraser
+				elseif (keyName:lower() == "r") then
+					local toolEvent = {
+						name = eventList.toolChanged,
+						tool = toolList.rotate
+					}
+					Runtime:dispatchEvent(toolEvent)
 				end
 
 				if (newTool ~= nil) then
