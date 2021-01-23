@@ -29,6 +29,12 @@ applicationMainMenuBar =
 				title = "File",
 				subItems = {
 					{
+						title = "New Map",
+						iconName = os.isLinux and "" or "map",
+						onClick = function()
+						end
+					},
+					{
 						title = "Load Map",
 						iconName = os.isLinux and "" or "folder-open",
 						onClick = function()
