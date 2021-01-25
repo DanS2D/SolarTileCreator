@@ -4,6 +4,8 @@ local M =
 	selectedTool = nil,
 	previousTool = nil,
 	selectedLayer = 1,
+	gridRows = 100,
+	gridColumns = 100,
 	layers = {
 		{
 			name = "Tile Layer", -- the map layer name
@@ -24,5 +26,13 @@ local M =
 		toolChanged = "toolChanged",
 	}
 }
+
+for i = 1, M.gridRows do
+	M.layers[1].data[i] = {}
+
+	for j = 1, M.gridColumns do
+		M.layers[1].data[i][j] = 0
+	end
+end
 
 return M

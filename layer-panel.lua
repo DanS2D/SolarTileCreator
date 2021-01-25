@@ -29,6 +29,15 @@ function M:new()
 						data = {}, -- the map layer data for this layer
 					}
 
+					-- create the data structure for the tiles
+					for i = 1, editor.gridRows do
+						editor.layers[#editor.layers].data[i] = {}
+					
+						for j = 1, editor.gridColumns do
+							editor.layers[#editor.layers].data[i][j] = 0
+						end
+					end
+
 					recreateList()
 					tableView.y = tableView.origY
 				end

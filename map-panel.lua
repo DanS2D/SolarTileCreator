@@ -29,8 +29,6 @@ function M:new(topGroup, gridRows, gridColumns)
 	})
 	panel.x = (panel.width * 0.5)
 	panel.y = (panel.height * 0.5) + 36
-	panel.tiles = {}
-	panel.layers = {{}}
 	panel.startX = 1
 	panel.xCount = mFloor((panel.width / 32) - 1)
 	panel.startY = 1
@@ -38,6 +36,7 @@ function M:new(topGroup, gridRows, gridColumns)
 
 	local toolList = editor.toolList
 	local eventList = editor.eventList
+	local groups = {}
 	local overlay = {}
 	local tileSheetOptions =
 	{
@@ -66,14 +65,6 @@ function M:new(topGroup, gridRows, gridColumns)
 	highlightTile.isVisible = false
 	panel:insert(highlightTile)
 
-	for i = 1, gridRows do
-		panel.layers[1][i] = {}
-
-		for j = 1, gridColumns do
-			panel.layers[1][i][j] = 0
-		end
-	end
-
 	-- create overlay grid
 	for i = 1, panel.xCount do
 		for j = 1, panel.yCount do
@@ -85,6 +76,16 @@ function M:new(topGroup, gridRows, gridColumns)
 			overlay[#overlay].y = (j * 32) - (panel.height * 0.5) + 3
 			panel:insert(overlay[#overlay])
 		end
+	end
+
+	-- create the display groups
+	for i = 1, 50 do
+		groups[i] = display.newGroup()
+	end
+
+	-- insert the groups into the panel in reverse order (to line up with layer ordering)
+	for i = 50, 1, -1 do
+		panel:insert(groups[i])
 	end
 
 	local function onEditorEvent(event)
@@ -109,7 +110,7 @@ function M:new(topGroup, gridRows, gridColumns)
 						if (index == 1) then
 							for i = 1, gridRows do
 								for j = 1, gridColumns do
-									panel.layers[1][i][j] = 0
+									editor.layers[editor.selectedLayer].data[i][j] = 0
 								end
 							end
 						end
@@ -134,12 +135,12 @@ function M:new(topGroup, gridRows, gridColumns)
 	local function flood4(x, y, startTileId)
 		if x < 1 or y < 1 then return end
 		if x > gridRows or y > gridColumns then return end
-		if not panel.layers[1][x][y] then return end
+		if not editor.layers[editor.selectedLayer].data[x][y] then return end
 
-		local currentTileId = panel.layers[1][x][y]
+		local currentTileId = editor.layers[editor.selectedLayer].data[x][y]
 		
 		if (currentTileId and (currentTileId == startTileId)) then
-			panel.layers[1][x][y] = editor.selectedTileId
+			editor.layers[editor.selectedLayer].data[x][y] = editor.selectedTileId
 			flood4(x + 1, y, startTileId)
 			flood4(x - 1, y, startTileId)
 			flood4(x, y + 1, startTileId)
@@ -153,7 +154,7 @@ function M:new(topGroup, gridRows, gridColumns)
 
 		-- normal 'paint' mode (nil) or eraser
 		if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
-			panel.layers[1][tileIndex.x][tileIndex.y] = editor.selectedTileId
+			editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] = editor.selectedTileId
 		end
 
 		return true
@@ -165,11 +166,11 @@ function M:new(topGroup, gridRows, gridColumns)
 
 		-- normal 'paint' mode (nil) or eraser
 		if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
-			panel.layers[1][tileIndex.x][tileIndex.y] = editor.selectedTileId
+			editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] = editor.selectedTileId
 		-- paint bucket
 		elseif (editor.selectedTool == toolList.bucket) then
-			if (panel.layers[1][tileIndex.x][tileIndex.y] ~= editor.selectedTileId) then
-				flood4(tileIndex.x, tileIndex.y, panel.layers[1][tileIndex.x][tileIndex.y])
+			if (editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] ~= editor.selectedTileId) then
+				flood4(tileIndex.x, tileIndex.y, editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y])
 			end
 		end
 
@@ -208,48 +209,49 @@ function M:new(topGroup, gridRows, gridColumns)
 	end
 
 	function panel:render()
-		for i = 1, #self.tiles do
-			display.remove(self.tiles[i])
-			self.tiles[i] = nil
+		for i = 1, 10 do
+			for j = groups[i].numChildren, 1, -1 do
+				display.remove(groups[i][j])
+			end			
 		end
 
-		self.tiles = {}
-		self.tiles = nil
-		self.tiles = {}
-		local iX = 0
-		local jY = 0
-	
-		for i = self.startX, self.startX + (self.xCount - 1) do
-			iX = iX + 1
+		for layerNo = #editor.layers, 1, -1 do
+			local iX = 0
+			local jY = 0
 		
-			if (iX > self.xCount) then
-				iX = 1
-			end
-	
-			for j = self.startY, self.startY + (self.yCount - 1) do
-				jY = jY + 1
-	
-				if (jY > self.yCount) then
-					jY = 1
+			for i = self.startX, self.startX + (self.xCount - 1) do
+				iX = iX + 1
+			
+				if (iX > self.xCount) then
+					iX = 1
 				end
-	
-				local index = (i + (self.xCount * j)) -- math: (x + (#mapRows * y))
-				local tileIndex = self.layers[1][i][j]
+		
+				for j = self.startY, self.startY + (self.yCount - 1) do
+					jY = jY + 1
+		
+					if (jY > self.yCount) then
+						jY = 1
+					end
+		
+					local index = (i + (self.xCount * j)) -- math: (x + (#mapRows * y))
+					local tileIndex = editor.layers[layerNo].data[i][j]
+					local currentTile = nil
 
-				if (tileIndex > 0) then
-					self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
-				else
-					self.tiles[#self.tiles + 1] = display.newRect(0, 0, 32, 32)
-					self.tiles[#self.tiles]:setFillColor(0.25, 0.25, 0.25)
+					if (tileIndex > 0) then
+						currentTile = display.newImageRect(imageSheet, tileIndex, 32, 32)
+					else
+						currentTile = display.newRect(0, 0, 32, 32)
+						currentTile:setFillColor(0.25, 0.25, 0.25, 0.01)
+					end
+						
+					currentTile.x = (iX * 32) - (panel.width * 0.5)
+					currentTile.y = (jY * 32) - (panel.height * 0.5) + 3
+					currentTile.tileIndex = {x = i, y = j}	
+					currentTile:addEventListener("tap", placeTileTap)
+					currentTile:addEventListener("touch", placeTileTouch)
+					currentTile:addEventListener("mouse", mouseTile)
+					groups[layerNo]:insert(currentTile)
 				end
-					
-				self.tiles[#self.tiles].x = (iX * 32) - (panel.width * 0.5)
-				self.tiles[#self.tiles].y = (jY * 32) - (panel.height * 0.5) + 3
-				self.tiles[#self.tiles].tileIndex = {x = i, y = j}	
-				self.tiles[#self.tiles]:addEventListener("tap", placeTileTap)
-				self.tiles[#self.tiles]:addEventListener("touch", placeTileTouch)
-				self.tiles[#self.tiles]:addEventListener("mouse", mouseTile)
-				self:insert(self.tiles[#self.tiles])
 			end
 		end
 
