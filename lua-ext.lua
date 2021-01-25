@@ -17,23 +17,17 @@ function _G.printf(msg, ...)
 	print(msg:format(...))
 end
 
-function table.deepCopy(orig)
-    local origType = type(orig)
-	local copy
-
-    if (origType == "table") then
-		copy = {}
-
-        for key, value in next, orig, nil do
-            copy[deepcopy(key)] = deepcopy(value)
+function table.deepCopy(original)
+	local copy = {}
+	
+	for k, v in pairs(original) do
+		if type(v) == "table" then
+			v = table.deepCopy(v)
 		end
-
-        setmetatable(copy, deepcopy(getmetatable(orig)))
-    else
-        copy = orig
+		copy[k] = v
 	end
-
-    return copy
+	
+	return copy
 end
 
 return M

@@ -11,6 +11,8 @@ local mapPanelWidget = require("map-panel")
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
 local fontAwesomeBrandsFont = "fonts/FA5-Brands-Regular.ttf"
+local eventList = editor.eventList
+local toolList = editor.toolList
 local applicationMainMenuBar = nil
 local toolPanel = nil
 local layerPanel = nil
@@ -74,18 +76,33 @@ applicationMainMenuBar =
 						title = "Rotate",
 						iconName = os.isLinux and "" or "sync-alt",
 						onClick = function(event)
+							local toolEvent = {
+								name = eventList.toolChanged,
+								tool = toolList.rotate
+							}
+							Runtime:dispatchEvent(toolEvent)
 						end
 					},
 					{
 						title = "Flip Horizontal",
 						iconName = os.isLinux and "" or "arrows-h",
 						onClick = function(event)
+							local toolEvent = {
+								name = eventList.toolChanged,
+								tool = toolList.flipHorizontal
+							}
+							Runtime:dispatchEvent(toolEvent)
 						end
 					},
 					{
 						title = "Flip Vertical",
 						iconName = os.isLinux and "" or "arrows-v",
 						onClick = function(event)
+							local toolEvent = {
+								name = eventList.toolChanged,
+								tool = toolList.flipVertical
+							}
+							Runtime:dispatchEvent(toolEvent)
 						end
 					},
 					{
@@ -103,7 +120,6 @@ applicationMainMenuBar =
 						title = "TODO",
 						iconName = os.isLinux and "" or "th-large",
 						onClick = function(event)
-							
 						end
 					}
 				}

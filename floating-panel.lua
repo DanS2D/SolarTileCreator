@@ -9,7 +9,10 @@ function M:new(options)
 	local title = options.title or error("floating-panel:new(options) title (string) expected, got", type(options.title))
 	local width = options.width or (display.contentWidth / 3)
 	local height = options.height or (display.contentHeight / 3)
+	local useVerticalScrollbar = options.verticalScrollbar
 	local buttons = options.buttons
+	local onScrollUpClick = options.onScrollUpClick
+	local onScrollDownClick = options.onScrollDownClick
 	local panel = display.newGroup()
 	local content = display.newContainer(width - 2, height - 2)
 	local panelButtons = {}
@@ -59,6 +62,48 @@ function M:new(options)
 		end
 	end
 
+	-- vertical scrollbar
+	if (useVerticalScrollbar) then
+		local scrollBackground = display.newRect(0, 0, 11, height)
+		scrollBackground.anchorX = 1
+		scrollBackground.anchorY = 0
+		scrollBackground.x = ((panel.width * 0.5) - 2)
+		scrollBackground.y = (menuBar.y + (menuBar.height * 0.5))
+		scrollBackground.fill = {0.2, 0.2, 0.2}
+		panel:insert(scrollBackground)
+
+		local scrollUpButton = buttonLib.new({
+			iconName = os.isLinux and "" or "arrow-up",
+			fontSize = 12,
+			fillColor = theme:get().textColor.primary,
+			onClick = function(event)
+				if (type(panel.onScrollUpClick) == "function") then
+					panel:onScrollUpClick(event)
+				end
+			end
+		})
+		scrollUpButton.x = (panel.width * 0.5) - (scrollUpButton.width * 0.5)
+		scrollUpButton.y = (menuBar.y + menuBar.height)
+		scrollUpButton.fill = theme:get().iconColor.primary
+		panel:insert(scrollUpButton)
+
+		local scrollDownButton = buttonLib.new({
+			iconName = os.isLinux and "" or "arrow-down",
+			fontSize = 12,
+			fillColor = theme:get().textColor.primary,
+			onClick = function(event)
+				if (type(panel.onScrollDownClick) == "function") then
+					panel:onScrollDownClick(event)
+				end
+			end
+		})
+		scrollDownButton.anchorY = 1
+		scrollDownButton.x = scrollUpButton.x
+		scrollDownButton.y = ((panel.height * 0.5) - scrollDownButton.height) 
+		scrollDownButton.fill = theme:get().iconColor.primary
+		panel:insert(scrollDownButton)
+	end
+
 	panel.anchorChildren = false
 	content.anchorChildren = false
 	panel:insert(content)
@@ -69,6 +114,12 @@ function M:new(options)
 
 	function panel:insert(...)
 		content:insert(...)
+	end
+
+	function panel:onScrollUpClick(event)
+	end
+
+	function panel:onScrollDownClick(event)
 	end
 
 	return panel

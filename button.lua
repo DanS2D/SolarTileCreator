@@ -54,6 +54,7 @@ function M.new(options)
 	end
 
 	button:addEventListener("touch")
+	button:addEventListener("tap", function(event) return true end)
 
 	return button
 end

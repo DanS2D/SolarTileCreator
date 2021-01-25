@@ -103,7 +103,9 @@ function M.new(options)
 	end
 
 	offButton:addEventListener("touch", touch)
+	offButton:addEventListener("tap", function(event) return true end)
 	onButton:addEventListener("touch", touch)
+	onButton:addEventListener("tap", function(event) return true end)
 	parent:insert(group)
 
 	return group

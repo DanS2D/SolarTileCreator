@@ -40,6 +40,7 @@ function M.new(options)
 	visibleRows = maxRows - 1
 	tableView.x = x
 	tableView.y = y
+	tableView.rowHeight = rowHeight
 
 	if (options.maxRows) then
 		maxRows = options.maxRows
@@ -338,6 +339,7 @@ function M.new(options)
 		end
 	end
 
+	--[[
 	function tableView:mouse(event)
 		local eventType = event.type
 		local scrollY = event.scrollY
@@ -396,7 +398,10 @@ function M.new(options)
 		end
 
 		return true
-	end
+	end--]]
+
+	tableView:addEventListener("touch", function() return true end)
+	tableView:addEventListener("tap", function() return true end)
 
 	if (useMouseListener) then
 		Runtime:addEventListener("mouse", tableView)
