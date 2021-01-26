@@ -5,6 +5,10 @@ local M = {}
 local mFloor = math.floor
 local bAnd = bit.band
 local bRShift = bit.rshift
+local tileMask = 0xFFFFFF
+local rotate90Flag = 0x8000000
+local rotate180Flag = 0xC000000
+local rotate270Flag = 0xE000000
 
 function M:new(topGroup, gridRows, gridColumns)
 	local topGroup = topGroup or error("map-panel: missing topGroup!")
@@ -62,12 +66,24 @@ function M:new(topGroup, gridRows, gridColumns)
 
 	local imageSheet = graphics.newImageSheet("data/tiles/tilesheet_complete_2X.png", tileSheetOptions)
 	
-	local highlightTile = display.newSprite(imageSheet, sequenceData)
-	highlightTile.strokeWidth = 1
-	highlightTile:setStrokeColor(1, 0, 0)
-	highlightTile.stroke.effect = "generator.marchingAnts"
-	highlightTile.isVisible = false
-	panel:insert(highlightTile)
+	panel.highlightTile = display.newSprite(imageSheet, sequenceData)
+	panel.highlightTile.strokeWidth = 1
+	panel.highlightTile:setStrokeColor(1, 0, 0)
+	panel.highlightTile.stroke.effect = "generator.marchingAnts"
+	panel.highlightTile.isVisible = false
+	panel:insert(panel.highlightTile)
+
+	function panel.highlightTile:handleRotation()
+		editor.selectedTileId = bAnd(tileMask, editor.selectedTileId)
+
+		if (panel.highlightTile.rotation == 90) then
+			editor.selectedTileId = bit.bor(rotate90Flag, editor.selectedTileId)
+		elseif (panel.highlightTile.rotation == 180) then
+			editor.selectedTileId = bit.bor(rotate180Flag, editor.selectedTileId)
+		elseif (panel.highlightTile.rotation == 270) then
+			editor.selectedTileId = bit.bor(rotate270Flag, editor.selectedTileId)
+		end
+	end
 
 	-- create overlay grid
 	for i = 1, panel.xCount do
@@ -123,11 +139,17 @@ function M:new(topGroup, gridRows, gridColumns)
 				  
 				native.showAlert("Clear Layer?", "Are you sure you want to clear all tiles on this layer?", {"Yes", "No"}, onClearLayer)
 			elseif (tool == toolList.rotate) then
-				highlightTile.rotation = highlightTile.rotation + 90
+				newTool = editor.previousTool
+				editor.selectedTool = newTool
+				panel.highlightTile.rotation = ((panel.highlightTile.rotation + 90) % 360)
 			elseif (tool == toolList.flipHorizontal) then
-				highlightTile.xScale = (highlightTile.xScale > 0) and -1 or 1
+				newTool = editor.previousTool
+				editor.selectedTool = newTool
+				panel.highlightTile.xScale = (panel.highlightTile.xScale > 0) and -1 or 1
 			elseif (tool == toolList.flipVertical) then
-				highlightTile.yScale = (highlightTile.yScale > 0) and -1 or 1
+				newTool = editor.previousTool
+				editor.selectedTool = newTool
+				panel.highlightTile.yScale = (panel.highlightTile.yScale > 0) and -1 or 1
 			end
 
 			editor.previousTool = newTool
@@ -154,14 +176,20 @@ function M:new(topGroup, gridRows, gridColumns)
 
 	local function placeTileTouch(event)
 		local target = event.target
+		local phase = event.phase
 		local tileIndex = target.tileIndex
 
-		-- normal 'paint' mode (nil) or eraser
-		if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
-			editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] = editor.selectedTileId
-		end
+		if (phase == "began" or phase == "moved") then
+			-- handle tile rotation
+			panel.highlightTile:handleRotation()
 
-		panel.refresh = true
+			-- normal 'paint' mode (nil) or eraser
+			if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
+				editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] = editor.selectedTileId
+			end
+
+			panel.refresh = true
+		end
 
 		return true
 	end
@@ -170,12 +198,11 @@ function M:new(topGroup, gridRows, gridColumns)
 		local target = event.target
 		local tileIndex = target.tileIndex
 
-		-- normal 'paint' mode (nil) or eraser
-		if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
-			editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] = editor.selectedTileId
 		-- paint bucket
-		elseif (editor.selectedTool == toolList.bucket) then
+		if (editor.selectedTool == toolList.bucket) then
 			if (editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] ~= editor.selectedTileId) then
+				-- handle tile rotation
+				panel.highlightTile:handleRotation()
 				flood4(tileIndex.x, tileIndex.y, editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y])
 			end
 		end
@@ -188,29 +215,29 @@ function M:new(topGroup, gridRows, gridColumns)
 	local function mouseTile(event)
 		local target = event.target
 		local phase = event.type
-		highlightTile.isVisible = true
+		panel.highlightTile.isVisible = true
 
 		if (editor.selectedTool == nil) then
-			highlightTile.isVisible = false
+			panel.highlightTile.isVisible = false
 		elseif (editor.selectedTool == toolList.brush) or
 		 	(editor.selectedTool == toolList.bucket) then
 			if (editor.selectedTileId > 0) then
-				highlightTile:setFrame(editor.selectedTileId)
-				highlightTile.fill.effect = nil
+				panel.highlightTile:setFrame(bAnd(0xFFFFFF, editor.selectedTileId))
+				panel.highlightTile.fill.effect = nil
 			else
-				highlightTile.isVisible = false
+				panel.highlightTile.isVisible = false
 			end
 		elseif (editor.selectedTool == toolList.eraser) then
-			highlightTile.fill.effect = "generator.linearGradient"
-			highlightTile.fill.effect.color1 = {0.8, 0, 0.2, 0.4}
-			highlightTile.fill.effect.position1 = {0, 0}
-			highlightTile.fill.effect.color2 = {0.2, 0.2, 0.2, 0.4}
-			highlightTile.fill.effect.position2 = {1, 1}
+			panel.highlightTile.fill.effect = "generator.linearGradient"
+			panel.highlightTile.fill.effect.color1 = {0.8, 0, 0.2, 0.4}
+			panel.highlightTile.fill.effect.position1 = {0, 0}
+			panel.highlightTile.fill.effect.color2 = {0.2, 0.2, 0.2, 0.4}
+			panel.highlightTile.fill.effect.position2 = {1, 1}
 		end
 
-		if (highlightTile.isVisible) then
-			highlightTile.x = target.x
-			highlightTile.y = target.y
+		if (panel.highlightTile.isVisible) then
+			panel.highlightTile.x = target.x
+			panel.highlightTile.y = target.y
 		end
 	
 		return true
@@ -233,7 +260,7 @@ function M:new(topGroup, gridRows, gridColumns)
 				if (iX > self.xCount) then
 					iX = 1
 				end
-		
+
 				for j = self.startY, self.startY + (self.yCount - 1) do
 					jY = jY + 1
 		
@@ -242,7 +269,8 @@ function M:new(topGroup, gridRows, gridColumns)
 					end
 		
 					local index = (i + (self.xCount * j)) -- math: (x + (#mapRows * y))
-					local tileIndex = bAnd(0xFFFFFFF, editor.layers[layerNo].data[i][j])
+					local tileData = editor.layers[layerNo].data[i][j]
+					local tileIndex = bAnd(tileMask, tileData)
 					local currentTile = nil
 
 					if (tileIndex > 0) then
@@ -250,6 +278,15 @@ function M:new(topGroup, gridRows, gridColumns)
 					else
 						currentTile = display.newRect(0, 0, 32, 32)
 						currentTile:setFillColor(0.25, 0.25, 0.25, 0.01)
+					end
+
+					-- handle tile rotation
+					if (bAnd(tileData, rotate90Flag) >= rotate90Flag and bAnd(tileData, rotate180Flag) < rotate180Flag) then
+						currentTile.rotation = 90
+					elseif (bAnd(tileData, rotate180Flag) >= rotate180Flag and bAnd(tileData, rotate270Flag) < rotate270Flag) then
+						currentTile.rotation = 180
+					elseif (bAnd(tileData, rotate270Flag) >= rotate270Flag) then
+						currentTile.rotation = 270
 					end
 						
 					currentTile.x = (iX * 32) - (panel.width * 0.5)
@@ -267,7 +304,7 @@ function M:new(topGroup, gridRows, gridColumns)
 			overlay[i]:toFront()
 		end
 
-		highlightTile:toFront()
+		panel.highlightTile:toFront()
 		self.refresh = false
 	end
 

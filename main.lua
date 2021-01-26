@@ -1,6 +1,4 @@
 
-local solarTiled = require("solarTilesCreator")
---solarTiled:loadMap("data/tiles/largeTest.json")
 local luaExt = require("lua-ext")
 local mainMenuBar = require("main-menu-bar")
 local editor = require("editor")

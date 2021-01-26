@@ -59,11 +59,13 @@ function M:new()
 			panel.tiles[i].stroke.effect = nil
 		end
 	
+		editor.mapPanel.highlightTile.rotation = 0
 		editor.selectedTileId = target.tileIndex
 		target.strokeWidth = 1
 		target:setStrokeColor(1, 0, 0)
 		target.stroke.effect = "generator.marchingAnts"
 		panel.refresh = true
+		editor.mapPanel.refresh = true
 
 		return true
 	end
@@ -97,7 +99,7 @@ function M:new()
 					jY = 1
 				end
 	
-				local tileIndex = (i + (108 * j)) -- math: (x + (#mapRows * y))
+				local tileIndex = (i + (108 * j)) - 108 -- math: (x + (#mapRows * y))
 	
 				self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
 				self.tiles[#self.tiles].x = (iX * 34) - (panel.width * 0.5) - 12
