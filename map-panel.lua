@@ -4,11 +4,12 @@ local editor = require("editor")
 local M = {}
 local mFloor = math.floor
 local bAnd = bit.band
+local bOr = bit.bor
 local bRShift = bit.rshift
 local tileMask = 0xFFFFFF
-local rotate90Flag = 0x8000000
-local rotate180Flag = 0xC000000
-local rotate270Flag = 0xE000000
+local rotate90Flag, rotate90Value = 0x8000000, 0x8
+local rotate180Flag, rotate180Value = 0xC000000, 0xC
+local rotate270Flag, rotate270Value = 0xE000000, 0xE
 
 function M:new(topGroup, gridRows, gridColumns)
 	local topGroup = topGroup or error("map-panel: missing topGroup!")
@@ -77,11 +78,11 @@ function M:new(topGroup, gridRows, gridColumns)
 		editor.selectedTileId = bAnd(tileMask, editor.selectedTileId)
 
 		if (panel.highlightTile.rotation == 90) then
-			editor.selectedTileId = bit.bor(rotate90Flag, editor.selectedTileId)
+			editor.selectedTileId = bOr(rotate90Flag, editor.selectedTileId)
 		elseif (panel.highlightTile.rotation == 180) then
-			editor.selectedTileId = bit.bor(rotate180Flag, editor.selectedTileId)
+			editor.selectedTileId = bOr(rotate180Flag, editor.selectedTileId)
 		elseif (panel.highlightTile.rotation == 270) then
-			editor.selectedTileId = bit.bor(rotate270Flag, editor.selectedTileId)
+			editor.selectedTileId = bOr(rotate270Flag, editor.selectedTileId)
 		end
 	end
 
@@ -281,11 +282,11 @@ function M:new(topGroup, gridRows, gridColumns)
 					end
 
 					-- handle tile rotation
-					if (bAnd(tileData, rotate90Flag) >= rotate90Flag and bAnd(tileData, rotate180Flag) < rotate180Flag) then
+					if (bRShift(tileData, 24) == rotate90Value) then
 						currentTile.rotation = 90
-					elseif (bAnd(tileData, rotate180Flag) >= rotate180Flag and bAnd(tileData, rotate270Flag) < rotate270Flag) then
+					elseif (bRShift(tileData, 24) == rotate180Value) then
 						currentTile.rotation = 180
-					elseif (bAnd(tileData, rotate270Flag) >= rotate270Flag) then
+					elseif (bRShift(tileData, 24) == rotate270Value) then
 						currentTile.rotation = 270
 					end
 						
