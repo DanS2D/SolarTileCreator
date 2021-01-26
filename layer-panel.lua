@@ -126,6 +126,7 @@ function M:new()
 					editor.layers[target.index - 1].index = editor.layers[target.index - 1].index + 1
 					table.sort(editor.layers, sortLayers)
 					recreateList()
+					editor.mapPanel.refresh = true
 				end
 			})
 			moveUpButton.index = row.index
@@ -153,6 +154,7 @@ function M:new()
 					editor.layers[target.index + 1].index = editor.layers[target.index + 1].index - 1
 					table.sort(editor.layers, sortLayers)
 					recreateList()
+					editor.mapPanel.refresh = true
 
 					return true
 				end
@@ -182,6 +184,7 @@ function M:new()
 					editor.layers[target.index].index = 1
 					table.sort(editor.layers, sortLayers)
 					recreateList()
+					editor.mapPanel.refresh = true
 				end
 			})
 			moveToTopButton.index = row.index
@@ -209,6 +212,7 @@ function M:new()
 					editor.layers[target.index].index = #editor.layers
 					table.sort(editor.layers, sortLayers)
 					recreateList()
+					editor.mapPanel.refresh = true
 				end
 			})
 			moveToBottomButton.index = row.index
@@ -231,6 +235,7 @@ function M:new()
 							if (index == 1) then
 								table.remove(editor.layers, target.index)
 								recreateList()
+								editor.mapPanel.refresh = true
 							end
 						end
 

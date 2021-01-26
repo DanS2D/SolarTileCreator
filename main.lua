@@ -16,8 +16,6 @@ local toolList = editor.toolList
 local applicationMainMenuBar = nil
 local toolPanel = nil
 local layerPanel = nil
-local tilePanel = nil
-local mapPanel = nil
 
 math.randomseed(os.time())
 
@@ -174,22 +172,27 @@ local bottomGroup = display.newGroup()
 local topGroup = display.newGroup()
 
 -- create the panels
+editor.mapPanel = mapPanelWidget:new(topGroup, 100, 100)
+editor.tilePanel = tilesheetPanelWidget:new()
 toolPanel = toolPanelWidget:new()
 layerPanel = layerPanelWidget:new()
-mapPanel = mapPanelWidget:new(topGroup, 100, 100)
-tilePanel = tilesheetPanelWidget:new()
 
 local function onKeyEvent(event)
-	tilePanel:onKeyEvent(event)
-	mapPanel:onKeyEvent(event)
+	editor.tilePanel:onKeyEvent(event)
+	editor.mapPanel:onKeyEvent(event)
 	toolPanel:onKeyEvent(event)
 
 	return true
 end
 
 local function mainLoop(event)
-	mapPanel:render()
-	tilePanel:render()
+	if (editor.mapPanel.refresh) then
+		editor.mapPanel:render()
+	end
+
+	if (editor.tilePanel.refresh) then
+		editor.tilePanel:render()
+	end
 end
 
 Runtime:addEventListener("enterFrame", mainLoop)

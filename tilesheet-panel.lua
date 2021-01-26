@@ -46,6 +46,7 @@ function M:new()
 	panel.xCount = 7
 	panel.startY = 1
 	panel.yCount = 7
+	panel.refresh = true
 	panel.tileGroup = display.newGroup()
 
 	local imageSheet = graphics.newImageSheet("data/tiles/tilesheet_complete_2X.png", tileSheetOptions)
@@ -62,6 +63,7 @@ function M:new()
 		target.strokeWidth = 1
 		target:setStrokeColor(1, 0, 0)
 		target.stroke.effect = "generator.marchingAnts"
+		panel.refresh = true
 
 		return true
 	end
@@ -115,6 +117,7 @@ function M:new()
 	
 		panel:insert(self.tileGroup)
 		display.getCurrentStage():insert(panel)
+		panel.refresh = false
 	end
 
 	function panel:onKeyEvent(event)
@@ -123,24 +126,28 @@ function M:new()
 		
 		if (keyName:lower() == "left") then
 			self.startX = self.startX - 1
+			panel.refresh = true
 
 			if (self.startX <= 1) then
 				self.startX = 1
 			end
 		elseif (keyName:lower() == "right") then
 			self.startX = self.startX + 1
+			panel.refresh = true
 
 			if (self.startX > 102) then
 				self.startX = 102
 			end
 		elseif (keyName:lower() == "up") then
 			self.startY = self.startY - 1
+			panel.refresh = true
 
 			if (self.startY <= 1) then
 				self.startY = 1
 			end
 		elseif (keyName:lower() == "down") then
 			self.startY = self.startY + 1
+			panel.refresh = true
 
 			if (self.startY > 73) then
 				self.startY = 73

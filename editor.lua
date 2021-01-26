@@ -6,6 +6,8 @@ local M =
 	selectedLayer = 1,
 	gridRows = 100,
 	gridColumns = 100,
+	mapPanel = nil,
+	tilePanel = nil,
 	layers = {
 		{
 			name = "Tile Layer", -- the map layer name

@@ -1,16 +1,19 @@
+local bit = require("plugin.bit")
 local floatingPanel = require("floating-panel")
 local editor = require("editor")
 local M = {}
 local mFloor = math.floor
+local bAnd = bit.band
+local bRShift = bit.rshift
 
 function M:new(topGroup, gridRows, gridColumns)
 	local topGroup = topGroup or error("map-panel: missing topGroup!")
 
-	if (type(gridRows) ~= "number") then 
+	if (type(gridRows) ~= "number") then
 		error("map-panel: missing rows!")
 	end
 
-	if (type(gridColumns) ~= "number") then 
+	if (type(gridColumns) ~= "number") then
 		error("map-panel: missing columns!")
 	end
 
@@ -19,10 +22,10 @@ function M:new(topGroup, gridRows, gridColumns)
 		height = (display.contentHeight) - 47,
 		title = ("Map (%dx%d - %d Tiles)"):format(gridRows, gridColumns, gridRows * gridColumns),
 		buttons = {
-			{icon = os.isLinux and "" or "search", action = function() 
+			{icon = os.isLinux and "" or "search", action = function()
 				
 			end},
-			{icon = os.isLinux and "" or "search-minus", action = function() 
+			{icon = os.isLinux and "" or "search-minus", action = function()
 				
 			end},
 		},
@@ -33,6 +36,7 @@ function M:new(topGroup, gridRows, gridColumns)
 	panel.xCount = mFloor((panel.width / 32) - 1)
 	panel.startY = 1
 	panel.yCount = mFloor((panel.height / 32) - 1)
+	panel.refresh = true
 
 	local toolList = editor.toolList
 	local eventList = editor.eventList
@@ -84,7 +88,7 @@ function M:new(topGroup, gridRows, gridColumns)
 	end
 
 	-- insert the groups into the panel in reverse order (to line up with layer ordering)
-	for i = 10, 1, -1 do
+	for i = #groups, 1, -1 do
 		panel:insert(groups[i])
 	end
 
@@ -157,6 +161,8 @@ function M:new(topGroup, gridRows, gridColumns)
 			editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] = editor.selectedTileId
 		end
 
+		panel.refresh = true
+
 		return true
 	end
 
@@ -173,6 +179,8 @@ function M:new(topGroup, gridRows, gridColumns)
 				flood4(tileIndex.x, tileIndex.y, editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y])
 			end
 		end
+
+		panel.refresh = true
 
 		return true
 	end
@@ -209,7 +217,7 @@ function M:new(topGroup, gridRows, gridColumns)
 	end
 
 	function panel:render()
-		for i = 1, 10 do
+		for i = 1, #groups do
 			for j = groups[i].numChildren, 1, -1 do
 				display.remove(groups[i][j])
 			end			
@@ -234,7 +242,7 @@ function M:new(topGroup, gridRows, gridColumns)
 					end
 		
 					local index = (i + (self.xCount * j)) -- math: (x + (#mapRows * y))
-					local tileIndex = editor.layers[layerNo].data[i][j]
+					local tileIndex = bAnd(0xFFFFFFF, editor.layers[layerNo].data[i][j])
 					local currentTile = nil
 
 					if (tileIndex > 0) then
@@ -260,6 +268,7 @@ function M:new(topGroup, gridRows, gridColumns)
 		end
 
 		highlightTile:toFront()
+		self.refresh = false
 	end
 
 	function panel:onKeyEvent(event)
@@ -268,24 +277,28 @@ function M:new(topGroup, gridRows, gridColumns)
 		
 		if (keyName:lower() == "a") then
 			self.startX = self.startX - 1
+			panel.refresh = true
 
 			if (self.startX <= 1) then
 				self.startX = 1
 			end
 		elseif (keyName:lower() == "d") then
 			self.startX = self.startX + 1
+			panel.refresh = true
 
 			if (self.startX >= gridRows) then
 				self.startX = gridRows
 			end
 		elseif (keyName:lower() == "w") then
 			self.startY = self.startY - 1
+			panel.refresh = true
 
 			if (self.startY <= 1) then
 				self.startY = 1
 			end
 		elseif (keyName:lower() == "s") then
 			self.startY = self.startY + 1
+			panel.refresh = true
 
 			if (self.startY > gridColumns) then
 				self.startY = gridColumns
