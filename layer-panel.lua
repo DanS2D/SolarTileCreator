@@ -23,8 +23,13 @@ function M:new()
 		buttons = {
 			{icon = os.isLinux and "" or "layer-plus", 
 				action = function() 
-					editor.layers[#editor.layers + 1] = {
-						name = "Layer_" .. #editor.layers + 1, -- the map layer name
+						if (#editor.layers >= 10) then
+							native.showAlert("Layer limit reached!", "There can 10 layers at a maximum", {"Ok"})
+							return
+						end
+
+						editor.layers[#editor.layers + 1] = {
+						name = "New Layer", -- the map layer name
 						index = #editor.layers + 1, -- the layer rendering index (1 = top)
 						data = {}, -- the map layer data for this layer
 					}

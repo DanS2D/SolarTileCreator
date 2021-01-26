@@ -79,12 +79,12 @@ function M:new(topGroup, gridRows, gridColumns)
 	end
 
 	-- create the display groups
-	for i = 1, 50 do
+	for i = 1, 10 do
 		groups[i] = display.newGroup()
 	end
 
 	-- insert the groups into the panel in reverse order (to line up with layer ordering)
-	for i = 50, 1, -1 do
+	for i = 10, 1, -1 do
 		panel:insert(groups[i])
 	end
 
