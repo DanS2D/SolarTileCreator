@@ -6,6 +6,7 @@ local toolPanelWidget = require("tool-panel")
 local layerPanelWidget = require("layer-panel")
 local tilesheetPanelWidget = require("tilesheet-panel")
 local mapPanelWidget = require("map-panel")
+local newMapWindowWidget = require("new-map-window")
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
 local fontAwesomeBrandsFont = "fonts/FA5-Brands-Regular.ttf"
@@ -14,6 +15,7 @@ local toolList = editor.toolList
 local applicationMainMenuBar = nil
 local toolPanel = nil
 local layerPanel = nil
+local newMapWindow = nil
 
 math.randomseed(os.time())
 
@@ -30,6 +32,8 @@ applicationMainMenuBar =
 						title = "New Map",
 						iconName = os.isLinux and "" or "map",
 						onClick = function()
+							newMapWindow = newMapWindowWidget:new()
+							newMapWindow:show()
 						end
 					},
 					{

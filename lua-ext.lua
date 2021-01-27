@@ -1,5 +1,6 @@
 local json = require("json")
 local M = {}
+local oldPrint = print
 
 os.isLinux = (system.getInfo("platform") == "linux")
 os.isMac = (system.getInfo("platform") == "macos")
@@ -14,8 +15,8 @@ function _G.toboolean(value)
 	return value
 end
 
-function _G.printf(msg, ...)
-	print(msg:format(...))
+function _G.print(msg, ...)
+	oldPrint(msg:format(...))
 end
 
 function table.deepCopy(original)

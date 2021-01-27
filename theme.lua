@@ -11,9 +11,13 @@ local defaultThemes = {
 			primary = {0.18, 0.34, 0.88, 0.5},
 			secondary = {0.15, 0.15, 0.15, 1},
 		},
+		windowColor = {
+			primary = {0.18, 0.34, 0.88, 1},
+			secondary = {0.15, 0.15, 0.15, 1},
+		},
 		rowColor = {
 			primary = {0.10, 0.10, 0.10, 1},
-			over = {0.18, 0.18, 0.18, 1}
+			over = {0.28, 0.28, 0.28, 1}
 		},
 		iconColor = {
 			primary = {0.7, 0.7, 0.7, 1},

@@ -1,9 +1,8 @@
-
-local M = {}
 local theme = require("theme")
 local buttonLib = require("button")
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
+local M = {}
 
 function M:new(options)
 	local title = options.title or error("floating-panel:new(options) title (string) expected, got", type(options.title))

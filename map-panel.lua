@@ -6,10 +6,12 @@ local mFloor = math.floor
 local bAnd = bit.band
 local bOr = bit.bor
 local bRShift = bit.rshift
-local tileMask = 0xFFFFFF
+local tileMask = 0xFFFFF
 local rotate90Flag, rotate90Value = 0x8000000, 0x8
 local rotate180Flag, rotate180Value = 0xC000000, 0xC
 local rotate270Flag, rotate270Value = 0xE000000, 0xE
+local flipHorizontalFlag, flipHorizontalValue = 0x1000000, 0x2
+local flipVerticalFlag, flipVerticalValue = 0x800000, 0x1
 
 function M:new(topGroup, gridRows, gridColumns)
 	local topGroup = topGroup or error("map-panel: missing topGroup!")
@@ -74,15 +76,25 @@ function M:new(topGroup, gridRows, gridColumns)
 	panel.highlightTile.isVisible = false
 	panel:insert(panel.highlightTile)
 
-	function panel.highlightTile:handleRotation()
+	function panel.highlightTile:handleRotationAndFlipping()
 		editor.selectedTileId = bAnd(tileMask, editor.selectedTileId)
 
+		-- rotation
 		if (panel.highlightTile.rotation == 90) then
 			editor.selectedTileId = bOr(rotate90Flag, editor.selectedTileId)
 		elseif (panel.highlightTile.rotation == 180) then
 			editor.selectedTileId = bOr(rotate180Flag, editor.selectedTileId)
 		elseif (panel.highlightTile.rotation == 270) then
 			editor.selectedTileId = bOr(rotate270Flag, editor.selectedTileId)
+		end
+
+		-- flipping
+		if (panel.highlightTile.xScale == -1) then
+			editor.selectedTileId = bOr(flipHorizontalFlag, editor.selectedTileId)
+		end
+
+		if (panel.highlightTile.yScale == -1) then
+			editor.selectedTileId = bOr(flipVerticalFlag, editor.selectedTileId)
 		end
 	end
 
@@ -146,7 +158,10 @@ function M:new(topGroup, gridRows, gridColumns)
 			elseif (tool == toolList.flipHorizontal) then
 				newTool = editor.previousTool
 				editor.selectedTool = newTool
-				panel.highlightTile.xScale = (panel.highlightTile.xScale > 0) and -1 or 1
+
+				if (panel.highlightTile.rotation == 0 or panel.highlightTile.rotation == 180) then
+					panel.highlightTile.rotation = panel.highlightTile.rotation + 180
+				end
 			elseif (tool == toolList.flipVertical) then
 				newTool = editor.previousTool
 				editor.selectedTool = newTool
@@ -181,8 +196,7 @@ function M:new(topGroup, gridRows, gridColumns)
 		local tileIndex = target.tileIndex
 
 		if (phase == "began" or phase == "moved") then
-			-- handle tile rotation
-			panel.highlightTile:handleRotation()
+			panel.highlightTile:handleRotationAndFlipping()
 
 			-- normal 'paint' mode (nil) or eraser
 			if (editor.selectedTool == toolList.brush or editor.selectedTool == toolList.eraser) then
@@ -202,8 +216,7 @@ function M:new(topGroup, gridRows, gridColumns)
 		-- paint bucket
 		if (editor.selectedTool == toolList.bucket) then
 			if (editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y] ~= editor.selectedTileId) then
-				-- handle tile rotation
-				panel.highlightTile:handleRotation()
+				panel.highlightTile:handleRotationAndFlipping()
 				flood4(tileIndex.x, tileIndex.y, editor.layers[editor.selectedLayer].data[tileIndex.x][tileIndex.y])
 			end
 		end
@@ -223,7 +236,7 @@ function M:new(topGroup, gridRows, gridColumns)
 		elseif (editor.selectedTool == toolList.brush) or
 		 	(editor.selectedTool == toolList.bucket) then
 			if (editor.selectedTileId > 0) then
-				panel.highlightTile:setFrame(bAnd(0xFFFFFF, editor.selectedTileId))
+				panel.highlightTile:setFrame(bAnd(tileMask, editor.selectedTileId))
 				panel.highlightTile.fill.effect = nil
 			else
 				panel.highlightTile.isVisible = false
@@ -288,6 +301,13 @@ function M:new(topGroup, gridRows, gridColumns)
 						currentTile.rotation = 180
 					elseif (bRShift(tileData, 24) == rotate270Value) then
 						currentTile.rotation = 270
+					-- handle tile flipping
+					elseif (bRShift(tileData, 23) == flipHorizontalValue) then
+						currentTile.xScale = -1
+					elseif (bRShift(tileData, 23) == flipVerticalValue) then
+						--currentTile.rotation = -currentTile.rotation
+						currentTile.yScale = -1
+						print("LOL")
 					end
 						
 					currentTile.x = (iX * 32) - (panel.width * 0.5)
