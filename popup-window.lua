@@ -1,15 +1,25 @@
 local theme = require("theme")
 local buttonLib = require("button")
+local M = {}
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
-local M = {}
+local mMin = math.min
 
 function M:new(options)
 	local window = display.newGroup()
 	local title = options.title or error("floating-panel:new(options) title (string) expected, got", type(options.title))
-	local width = options.width or (display.contentWidth - 40)
-	local height = options.height or (display.contentHeight - 40)
+	local width = options.width or mMin(720, (display.contentWidth - 40))
+	local height = options.height or mMin(560, (display.contentHeight - 40))
+	local modal = options.modal ~= nil and options.modal or true
 	local content = display.newContainer(width - 2, height - 2)
+
+	if (modal) then
+		local modalBackground = display.newRect(0, 0, display.contentWidth, display.contentHeight + 20)
+		modalBackground.fill = {0, 0, 0, 0.7}
+		modalBackground:addEventListener("tap", function() return true end)
+		modalBackground:addEventListener("touch", function() return true end)
+		window:insert(modalBackground)
+	end
 
 	local background = display.newRect(0, 0, width, height)
 	background.fill = options.backgroundColor or theme:get().backgroundColor.primary

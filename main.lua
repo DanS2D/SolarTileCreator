@@ -32,7 +32,10 @@ applicationMainMenuBar =
 						title = "New Map",
 						iconName = os.isLinux and "" or "map",
 						onClick = function()
-							newMapWindow = newMapWindowWidget:new()
+							if (newMapWindow == nil) then
+								newMapWindow = newMapWindowWidget:new()
+							end
+
 							newMapWindow:show()
 						end
 					},
