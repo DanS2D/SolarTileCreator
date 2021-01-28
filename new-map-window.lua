@@ -1,6 +1,7 @@
 local popupWindow = require("popup-window")
 local buttonLib = require("button")
 local theme = require("theme")
+local editor = require("editor")
 local M = {}
 local titleFont = "fonts/Jost-500-Medium.ttf"
 local subTitleFont = "fonts/Jost-400-Book.ttf"
@@ -163,6 +164,41 @@ function M:new()
 		fontSize = fontSize,
 		fillColor = theme:get().textColor.primary,
 		onClick = function(event)
+			local alertTitle = "Invalid Settings"
+			local alertMessage = nil
+
+			-- sanity checks
+			if (map.name == nil or map.name:len() < 1) then
+				alertMessage = "Invalid Map Name.\n\nMap name has to be 1 character in length or greater"
+			end
+
+			if (map.width == nil or map.width < 1) and (alertMessage == nil) then
+				alertMessage = "Invalid Map Width\n\nMap width has to be 1 tile or greater."
+			end
+
+			if (map.height == nil or map.height < 1) and (alertMessage == nil) then
+				alertMessage = "Invalid Map Height\n\nMap height has to be 1 tile or greater."
+			end
+
+			if (map.tileWidth == nil or map.tileWidth < 8) and (alertMessage == nil) then
+				alertMessage = "Invalid Tile Width\n\nTile width has to be 8 pixels or greater."
+			end
+
+			if (map.tileHeight == nil or map.tileHeight < 8) and (alertMessage == nil) then
+				alertMessage = "Invalid Tile Height\n\nTile height has to be 8 pixels or greater."
+			end
+
+			if (alertMessage ~= nil) then
+				native.showAlert(alertTitle, alertMessage, {"Ok"})
+				return
+			end
+
+			editor.mapName = map.name
+			editor.gridRows = map.width
+			editor.gridColumns = map.height
+			editor.tileWidth = map.tileWidth
+			editor.tileHeight = map.tileHeight
+			editor.createdOrLoadedMap = true
 			window:close()
 		end
 	})

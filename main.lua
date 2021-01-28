@@ -15,6 +15,7 @@ local toolList = editor.toolList
 local applicationMainMenuBar = nil
 local toolPanel = nil
 local layerPanel = nil
+local welcomeText = nil
 local newMapWindow = nil
 
 math.randomseed(os.time())
@@ -32,10 +33,7 @@ applicationMainMenuBar =
 						title = "New Map",
 						iconName = os.isLinux and "" or "map",
 						onClick = function()
-							if (newMapWindow == nil) then
-								newMapWindow = newMapWindowWidget:new()
-							end
-
+							welcomeText.isVisible = false
 							newMapWindow:show()
 						end
 					},
@@ -175,12 +173,15 @@ applicationMainMenuBar =
 
 local bottomGroup = display.newGroup()
 local topGroup = display.newGroup()
-
--- create the panels
-editor.mapPanel = mapPanelWidget:new(topGroup, 100, 100)
-editor.tilePanel = tilesheetPanelWidget:new()
-toolPanel = toolPanelWidget:new()
-layerPanel = layerPanelWidget:new()
+newMapWindow = newMapWindowWidget:new()
+welcomeText = display.newText({
+	text = "Welcome to SolarTilesCreator!\n\nGo to 'File > Create Map' or 'File > Load Map' to get started.",
+	font = titleFont,
+	align = "center",
+	fontSize = 14,
+})
+welcomeText.x = display.contentCenterX
+welcomeText.y = display.contentCenterY
 
 local function onKeyEvent(event)
 	editor.tilePanel:onKeyEvent(event)
@@ -191,14 +192,28 @@ local function onKeyEvent(event)
 end
 
 local function mainLoop(event)
-	if (editor.mapPanel.refresh) then
-		editor.mapPanel:render()
-	end
+	-- initial panel creation after startup action (new map, load map etc)
+	if (editor.createdOrLoadedMap) then
+		-- create the panels
+		if (editor.mapPanel == nil) then
+			editor.mapPanel = mapPanelWidget:new(topGroup, 100, 100)
+			editor.tilePanel = tilesheetPanelWidget:new()
+			toolPanel = toolPanelWidget:new()
+			layerPanel = layerPanelWidget:new()
+			Runtime:addEventListener("key", onKeyEvent)
+			welcomeText.isVisible = false
+			editor.createdOrLoadedMap = false
+		end
+	
+		-- refresh the panels
+		if (editor.mapPanel.refresh) then
+			editor.mapPanel:render()
+		end
 
-	if (editor.tilePanel.refresh) then
-		editor.tilePanel:render()
+		if (editor.tilePanel.refresh) then
+			editor.tilePanel:render()
+		end
 	end
 end
 
 Runtime:addEventListener("enterFrame", mainLoop)
-Runtime:addEventListener("key", onKeyEvent)
