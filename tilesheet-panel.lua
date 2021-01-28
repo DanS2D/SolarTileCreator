@@ -6,8 +6,8 @@ local M = {}
 function M:new()
 	local tileSheetOptions =
 	{
-		width = 32,
-		height = 32,
+		width = editor.tileWidth,
+		height = editor.tileHeight,
 		numFrames = 8640,
 		sheetContentWidth = 3456, -- width of original 1x size of entire sheet
 		sheetContentHeight = 2560 -- height of original 1x size of entire sheet
@@ -101,9 +101,9 @@ function M:new()
 	
 				local tileIndex = (i + (108 * j)) - 108 -- math: (x + (#mapRows * y))
 	
-				self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, 32, 32)
-				self.tiles[#self.tiles].x = (iX * 34) - (panel.width * 0.5) - 12
-				self.tiles[#self.tiles].y = (jY * 34) - (panel.height * 0.5)
+				self.tiles[#self.tiles + 1] = display.newImageRect(imageSheet, tileIndex, editor.tileWidth, editor.tileHeight)
+				self.tiles[#self.tiles].x = (iX * (editor.tileWidth + 2)) - (panel.width * 0.5) - 12
+				self.tiles[#self.tiles].y = (jY * (editor.tileHeight + 2)) - (panel.height * 0.5)
 				self.tiles[#self.tiles].tileIndex = tileIndex
 	
 				if (editor.selectedTileId == tileIndex) then

@@ -202,7 +202,6 @@ local function mainLoop(event)
 			layerPanel = layerPanelWidget:new()
 			Runtime:addEventListener("key", onKeyEvent)
 			welcomeText.isVisible = false
-			editor.createdOrLoadedMap = false
 		end
 	
 		-- refresh the panels

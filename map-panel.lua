@@ -40,9 +40,9 @@ function M:new(topGroup, gridRows, gridColumns)
 	panel.x = (panel.width * 0.5)
 	panel.y = (panel.height * 0.5) + 36
 	panel.startX = 1
-	panel.xCount = mFloor((panel.width / 32) - 1)
+	panel.xCount = mFloor((panel.width / editor.tileWidth) - 1)
 	panel.startY = 1
-	panel.yCount = mFloor((panel.height / 32) - 1)
+	panel.yCount = mFloor((panel.height / editor.tileHeight) - 1)
 	panel.refresh = true
 
 	local toolList = editor.toolList
@@ -51,8 +51,8 @@ function M:new(topGroup, gridRows, gridColumns)
 	local overlay = {}
 	local tileSheetOptions =
 	{
-		width = 32,
-		height = 32,
+		width = editor.tileWidth,
+		height = editor.tileHeight,
 		numFrames = 8640,
 		sheetContentWidth = 3456, -- width of original 1x size of entire sheet
 		sheetContentHeight = 2560 -- height of original 1x size of entire sheet
@@ -105,8 +105,8 @@ function M:new(topGroup, gridRows, gridColumns)
 			overlay[#overlay].strokeWidth = 1
 			overlay[#overlay]:setFillColor(0, 0, 0, 0.01)
 			overlay[#overlay]:setStrokeColor(1, 1, 1, 0.5)
-			overlay[#overlay].x = (i * 32) - (panel.width * 0.5)
-			overlay[#overlay].y = (j * 32) - (panel.height * 0.5) + 3
+			overlay[#overlay].x = (i * editor.tileWidth) - (panel.width * 0.5)
+			overlay[#overlay].y = (j * editor.tileHeight) - (panel.height * 0.5) + 3
 			panel:insert(overlay[#overlay])
 		end
 	end
@@ -288,9 +288,9 @@ function M:new(topGroup, gridRows, gridColumns)
 					local currentTile = nil
 
 					if (tileIndex > 0) then
-						currentTile = display.newImageRect(imageSheet, tileIndex, 32, 32)
+						currentTile = display.newImageRect(imageSheet, tileIndex, editor.tileWidth, editor.tileHeight)
 					else
-						currentTile = display.newRect(0, 0, 32, 32)
+						currentTile = display.newRect(0, 0, editor.tileWidth, editor.tileHeight)
 						currentTile:setFillColor(0.25, 0.25, 0.25, 0.01)
 					end
 
@@ -310,8 +310,8 @@ function M:new(topGroup, gridRows, gridColumns)
 						print("LOL")
 					end
 						
-					currentTile.x = (iX * 32) - (panel.width * 0.5)
-					currentTile.y = (jY * 32) - (panel.height * 0.5) + 3
+					currentTile.x = (iX * editor.tileWidth) - (panel.width * 0.5)
+					currentTile.y = (jY * editor.tileHeight) - (panel.height * 0.5) + 3
 					currentTile.tileIndex = {x = i, y = j}	
 					currentTile:addEventListener("tap", placeTileTap)
 					currentTile:addEventListener("touch", placeTileTouch)
