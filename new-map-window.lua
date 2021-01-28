@@ -78,7 +78,7 @@ function M:new()
 					event.target.text = text:sub(1, -7)
 				end
 			elseif (phase == "ended" or phase == "submitted") then
-				map.width = tonumber(text)
+				map.width = tonumber(event.target.text)
 
 				if (map.width ~= nil) then
 					event.target.text = ("%d tiles"):format(map.width)
@@ -200,6 +200,7 @@ function M:new()
 			editor.tileHeight = map.tileHeight
 			editor:init()
 			editor.createdOrLoadedMap = true
+			editor.reloadEditor = true
 			window:close()
 		end
 	})
@@ -220,6 +221,7 @@ function M:new()
 		end
 
 		self.isVisible = true
+		self:toFront()
 	end
 
 	return window

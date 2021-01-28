@@ -51,9 +51,10 @@ applicationMainMenuBar =
 							})
 
 							if (foundFile ~= nil) then
+								local data = table.load(foundFile)
 								welcomeText.isVisible = false
 								editor:init()
-								editor.layers = table.load(foundFile)
+								editor.layers = data.layers
 								editor.createdOrLoadedMap = true
 								editor.reloadEditor = true
 							end
@@ -71,7 +72,10 @@ applicationMainMenuBar =
 							})
 
 							if (savedFile ~= nil) then
-								table.save(editor.layers, ("%s.json"):format(savedFile))
+								local data = {
+									layers = editor.layers
+								}
+								table.save(data, ("%s.json"):format(savedFile))
 							end
 						end
 					},

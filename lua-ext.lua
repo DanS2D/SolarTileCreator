@@ -16,7 +16,11 @@ function _G.toboolean(value)
 end
 
 function _G.print(msg, ...)
-	oldPrint(msg:format(...))
+	if (type(msg) == "string") then
+		oldPrint(msg:format(...))
+	else
+		oldPrint(msg, ...)
+	end
 end
 
 function table.deepCopy(original)

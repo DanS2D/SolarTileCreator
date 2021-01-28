@@ -45,6 +45,14 @@ function M:new(topGroup, gridRows, gridColumns)
 	panel.yCount = mFloor((panel.height / editor.tileHeight) - 1)
 	panel.refresh = true
 
+	if (panel.xCount > editor.gridRows) then
+		panel.xCount = editor.gridRows
+	end
+
+	if (panel.yCount > editor.gridColumns) then
+		panel.yCount = editor.gridColumns
+	end
+
 	local toolList = editor.toolList
 	local eventList = editor.eventList
 	local groups = {}
@@ -307,7 +315,6 @@ function M:new(topGroup, gridRows, gridColumns)
 					elseif (bRShift(tileData, 23) == flipVerticalValue) then
 						--currentTile.rotation = -currentTile.rotation
 						currentTile.yScale = -1
-						print("LOL")
 					end
 						
 					currentTile.x = (iX * editor.tileWidth) - (panel.width * 0.5)
