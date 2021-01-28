@@ -9,6 +9,7 @@ local M =
 	tileWidth = 32,
 	tileHeight = 32,
 	createdOrLoadedMap = false,
+	reloadEditor = false,
 	mapName = nil,
 	mapPanel = nil,
 	tilePanel = nil,
@@ -33,11 +34,22 @@ local M =
 	}
 }
 
-for i = 1, M.gridRows do
-	M.layers[1].data[i] = {}
+function M:init()
+	self.layers = nil
+	self.layers = {
+		{
+			name = "Tile Layer", -- the map layer name
+			index = 1, -- the layer rendering index (1 = top)
+			data = {}, -- the map layer data for this layer
+		}
+	}
 
-	for j = 1, M.gridColumns do
-		M.layers[1].data[i][j] = 0
+	for i = 1, self.gridRows do
+		self.layers[1].data[i] = {}
+	
+		for j = 1, self.gridColumns do
+			self.layers[1].data[i][j] = 0
+		end
 	end
 end
 

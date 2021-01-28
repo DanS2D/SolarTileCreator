@@ -20,15 +20,13 @@ function M:new()
 		buttons = {
 			{icon = os.isLinux and "" or "folder-open", 
 				action = function()
-					local foundFile = tfd.openFileDialog(
-						{
-							title = "Select Tilesheet",
-							initialPath = os.homePath,
-							filters = {"*.png", "*.jpg"},
-							singleFilterDescription = "Image Files| *.png;*.jpg etc",
-							multiSelect = false
-						}
-					)
+					local foundFile = tfd.openFileDialog({
+						title = "Select Tilesheet",
+						initialPath = os.homePath,
+						filters = {"*.png", "*.jpg"},
+						singleFilterDescription = "Image Files| *.png;*.jpg etc",
+						multiSelect = false
+					})
 
 					if (foundFile ~= nil) then
 						-- if path is relative to the CWD, it will return

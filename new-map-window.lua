@@ -198,6 +198,7 @@ function M:new()
 			editor.gridColumns = map.height
 			editor.tileWidth = map.tileWidth
 			editor.tileHeight = map.tileHeight
+			editor:init()
 			editor.createdOrLoadedMap = true
 			window:close()
 		end

@@ -1,5 +1,6 @@
 
 local luaExt = require("lua-ext")
+local tfd = require("plugin.tinyFileDialogs")
 local mainMenuBar = require("main-menu-bar")
 local editor = require("editor")
 local toolPanelWidget = require("tool-panel")
@@ -41,12 +42,37 @@ applicationMainMenuBar =
 						title = "Load Map",
 						iconName = os.isLinux and "" or "folder-open",
 						onClick = function()
+							local foundFile = tfd.openFileDialog({
+								title = "Select Map",
+								initialPath = os.homePath,
+								filters = {"*.json", "*.map", "*.stm"},
+								singleFilterDescription = "Map File(s)| *.json;*.map;*.stm etc",
+								multiSelect = false
+							})
+
+							if (foundFile ~= nil) then
+								welcomeText.isVisible = false
+								editor:init()
+								editor.layers = table.load(foundFile)
+								editor.createdOrLoadedMap = true
+								editor.reloadEditor = true
+							end
 						end
 					},
 					{
 						title = "Save Map",
 						iconName = os.isLinux and "" or "save",
 						onClick = function()
+							local savedFile = tfd.saveFileDialog({
+								title = "Save map as",
+								initialPath = os.homePath,
+								filters = {"*.json", "*.map", "*.stm"},
+								singleFilterDescription = "Map File(s)| *.json;*.map;*.stm etc"
+							})
+
+							if (savedFile ~= nil) then
+								table.save(editor.layers, ("%s.json"):format(savedFile))
+							end
 						end
 					},
 					{
@@ -203,8 +229,15 @@ local function mainLoop(event)
 			Runtime:addEventListener("key", onKeyEvent)
 			welcomeText.isVisible = false
 		end
-	
-		-- refresh the panels
+
+		-- when loading a new map or creating one
+		if (editor.reloadEditor) then
+			layerPanel:onMapLoadedOrCreated()
+			editor.mapPanel.refresh = true
+			editor.tilePanel.refresh = true
+			editor.reloadEditor = false
+		end
+
 		if (editor.mapPanel.refresh) then
 			editor.mapPanel:render()
 		end

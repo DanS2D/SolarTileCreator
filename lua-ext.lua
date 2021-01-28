@@ -33,14 +33,13 @@ function table.deepCopy(original)
 end
 
 function table.load(filename, location)
-	local loc = location
+	local filePath = filename
 
-	if not location then
-		loc = system.ResourceDirectory
+	if (location) then
+		filePath = system.pathForFile(filename, location)
 	end
 
-	local path = system.pathForFile(filename, loc)
-	local file, errorString = io.open(path, "r")
+	local file, errorString = io.open(filePath, "r")
 
 	if not file then
 		print("File error: " .. errorString .. " at path: " .. path)
@@ -55,14 +54,13 @@ function table.load(filename, location)
 end
 
 function table.save(t, filename, location)
-	local loc = location
+	local filePath = filename
 
-	if not location then
-		loc = system.DocumentsDirectory
+	if (location) then
+		filePath = system.pathForFile(filename, location)
 	end
 
-	local path = system.pathForFile(filename, loc)
-	local file, errorString = io.open(path, "w")
+	local file, errorString = io.open(filePath, "w")
 
 	if not file then
 		print("File error: " .. errorString)

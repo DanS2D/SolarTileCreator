@@ -300,6 +300,10 @@ function M:new()
 	function panel:render()
 	end
 
+	function panel:onMapLoadedOrCreated()
+		recreateList()
+	end
+
 	function panel:onScrollUpClick(event)
 		local rowHeight = tableView.rowHeight
 		local limit = (tableView.origY - rowHeight)
